@@ -24,6 +24,20 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
     if (defaultValues) reset(defaultValues);
   }, [defaultValues, reset]);
 
+  useEffect(() => {
+    const editor = document.querySelector('.ql-editor');
+    if (!editor) return;
+
+    const resizeEditor = () => {
+        editor.style.height = 'auto';
+        editor.style.height = editor.scrollHeight + 'px';
+    };
+
+    editor.addEventListener('input', resizeEditor);
+    return () => editor.removeEventListener('input', resizeEditor);
+    }, []);
+
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -97,16 +111,22 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
         {...register('tanggal', { required: true })}
       />
 
-      <label>Isi Artikel</label>
-      <ReactQuill
-        theme="snow"
-        modules={modules}
-        formats={formats}
-        value={konten || ''}
-        onChange={(value) => setValue('konten', value)}
-        placeholder="Tulis isi artikel di sini..."
-        className="bg-white rounded"
-      />
+      <label className="block mt-3 font-medium">Isi Artikel</label>
+        <div
+        className="bg-white border rounded"
+        style={{ resize: 'vertical', overflow: 'auto' }}
+        >
+        <ReactQuill
+            theme="snow"
+            modules={modules}
+            formats={formats}
+            value={watch('konten') || ''}
+            onChange={(val) => setValue('konten', val)}
+            placeholder="Tulis isi artikel di sini..."
+            style={{ minHeight: '200px' }}
+        />
+        </div>
+
 
       <label className="mt-3 block">Gambar Artikel</label>
       <div className="mt-2 space-y-2">
