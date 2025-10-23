@@ -7,26 +7,37 @@ import { usePelatihan } from '@/hooks/usePelatihan';
 
 interface PembayaranInvoiceProps {
   pembayaran: {
-    id: string;
-    peserta_id: string;
-    jumlah: number;
-    tanggal_pembayaran: string;
+    id?: string;
+    peserta_id?: string;
+    jumlah?: number;
+    tanggal_pembayaran?: string;
     keterangan?: string;
+    // For summary view
+    peserta?: any;
+    pelatihan?: any;
+    total_pembayaran?: number;
+    sisa_pembayaran?: number;
   };
 }
 
 export default function PembayaranInvoice({ pembayaran }: PembayaranInvoiceProps) {
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
-  const { data: peserta } = usePeserta(pembayaran.peserta_id);
-  const { data: pelatihan } = usePelatihan(peserta?.pelatihan_id);
+  const { data: fetchedPeserta } = usePeserta(pembayaran.peserta_id);
+  const { data: fetchedPelatihan } = usePelatihan(fetchedPeserta?.pelatihan_id);
+
+  const peserta = pembayaran.peserta || fetchedPeserta;
+  const pelatihan = pembayaran.pelatihan || fetchedPelatihan;
+  const isDetailView = !!pembayaran.id;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      window.print();
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('autoPrint') === '1') {
+      const timer = setTimeout(() => {
+        window.print();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (
@@ -114,22 +125,60 @@ export default function PembayaranInvoice({ pembayaran }: PembayaranInvoiceProps
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  <tr>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {pembayaran.keterangan || 'Pembayaran Pelatihan'}
-                    </td>
-                    <td className="px-6 py-4 text-right text-sm text-gray-900">
-                      {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
-                        .format(pembayaran.jumlah)}
-                    </td>
-                  </tr>
+                  {isDetailView ? (
+                    <tr>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {pembayaran.keterangan || 'Pembayaran Pelatihan'}
+                      </td>
+                      <td className="px-6 py-4 text-right text-sm text-gray-900">
+                        {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                          .format(pembayaran.jumlah || 0)}
+                      </td>
+                    </tr>
+                  ) : (
+                    <>
+                      <tr>
+                        <td className="px-6 py-4 text-sm text-gray-900">Total Biaya Pelatihan</td>
+                        <td className="px-6 py-4 text-right text-sm text-gray-900">
+                          {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                            .format(pelatihan?.harga_pelatihan || 0)}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 text-sm text-gray-900">Total Sudah Dibayar</td>
+                        <td className="px-6 py-4 text-right text-sm text-gray-900 text-green-600">
+                          {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                            .format(pembayaran.total_pembayaran || 0)}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 text-sm text-gray-900">Sisa Pembayaran</td>
+                        <td className="px-6 py-4 text-right text-sm text-gray-900 text-red-600">
+                          {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                            .format(pembayaran.sisa_pembayaran || 0)}
+                        </td>
+                      </tr>
+                    </>
+                  )}
                 </tbody>
                 <tfoot className="bg-gray-50">
                   <tr>
-                    <td className="px-6 py-3 text-sm font-semibold text-gray-900">Total Pembayaran</td>
+                    <td className="px-6 py-3 text-sm font-semibold text-gray-900">
+                      {isDetailView ? 'Total Pembayaran' : 'Status'}
+                    </td>
                     <td className="px-6 py-3 text-right text-sm font-semibold text-gray-900">
-                      {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
-                        .format(pembayaran.jumlah)}
+                      {isDetailView ? (
+                        new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                          .format(pembayaran.jumlah || 0)
+                      ) : (
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          (pembayaran.sisa_pembayaran || 0) <= 0 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {(pembayaran.sisa_pembayaran || 0) <= 0 ? 'Lunas' : 'Belum Lunas'}
+                        </span>
+                      )}
                     </td>
                   </tr>
                 </tfoot>

@@ -183,25 +183,6 @@ export default function AdminPembayaran() {
             </div>
           </div>
 
-          {/* Invoice Print Area (hidden on screen, shown on print) */}
-          <div className="hidden print:block print-invoice">
-            <h2 style={{ fontWeight: 700, fontSize: 22, marginBottom: 16 }}>INVOICE PEMBAYARAN</h2>
-            <div style={{ marginBottom: 12 }}>
-              <strong>Nama Peserta:</strong> {selectedPeserta.nama}<br />
-              <strong>NIK:</strong> {selectedPeserta.nik}<br />
-              <strong>Nama Pelatihan:</strong> {selectedPelatihanData.nama_pelatihan}<br />
-              <strong>Kategori Pelatihan:</strong> {selectedPelatihanData.kategori_pelatihan}<br />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <strong>Total Biaya Pelatihan:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(selectedPelatihanData.harga_pelatihan)}<br />
-              <strong>Total Sudah Dibayar:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPembayaran)}<br />
-              <strong>Sisa Pembayaran:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(sisaPembayaran)}<br />
-              <strong>Status:</strong> {sisaPembayaran <= 0 ? 'Lunas' : 'Belum Lunas'}
-            </div>
-            <div style={{ marginTop: 24, fontSize: 12, color: '#888' }}>
-              Dicetak pada: {new Date().toLocaleString('id-ID')}
-            </div>
-          </div>
         </>
       )}
 
@@ -253,15 +234,6 @@ export default function AdminPembayaran() {
                           }}
                         >
                           Preview
-                        </button>
-                        <button
-                          className="text-blue-600 hover:text-blue-900"
-                          onClick={() => {
-                            // Open invoice page for specific pembayaran in new tab
-                            window.open(`/admin/pembayaran/invoice/${row.id}?autoPrint=1`, '_blank');
-                          }}
-                        >
-                          Print Invoice
                         </button>
                         <button
                           className="text-red-600 hover:text-red-900"
@@ -317,24 +289,18 @@ export default function AdminPembayaran() {
               </div>
             </div>
             <div className="p-6 overflow-auto max-h-[80vh]">
-              {previewType === 'pembayaran' && previewPembayaran ? (
-                <PembayaranInvoice pembayaran={previewPembayaran} />
-              ) : (
-                <div>
-                  <h2 style={{ fontWeight: 700, fontSize: 22, marginBottom: 16 }}>INVOICE PEMBAYARAN</h2>
-                  <div style={{ marginBottom: 12 }}>
-                    <strong>Nama Peserta:</strong> {selectedPeserta?.nama}<br />
-                    <strong>NIK:</strong> {selectedPeserta?.nik}<br />
-                    <strong>Nama Pelatihan:</strong> {selectedPelatihanData?.nama_pelatihan}<br />
-                    <strong>Kategori Pelatihan:</strong> {selectedPelatihanData?.kategori_pelatihan}<br />
-                  </div>
-                  <div style={{ marginBottom: 12 }}>
-                    <strong>Total Biaya Pelatihan:</strong> {selectedPelatihanData ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(selectedPelatihanData.harga_pelatihan) : '-'}<br />
-                    <strong>Total Sudah Dibayar:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPembayaran)}<br />
-                    <strong>Sisa Pembayaran:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(sisaPembayaran)}<br />
-                  </div>
-                </div>
-              )}
+              <PembayaranInvoice 
+                pembayaran={
+                  previewType === 'pembayaran' && previewPembayaran 
+                    ? previewPembayaran 
+                    : {
+                        peserta: selectedPeserta,
+                        pelatihan: selectedPelatihanData,
+                        total_pembayaran: totalPembayaran,
+                        sisa_pembayaran: sisaPembayaran
+                      }
+                } 
+              />
             </div>
           </div>
         </div>
