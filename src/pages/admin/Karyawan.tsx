@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getKaryawanList, createKaryawan, updateKaryawan, deleteKaryawan } from '@/integrations/supabase/karyawanService';
+import KaryawanForm from '@/components/forms/KaryawanForm';
 
 export default function AdminKaryawan() {
   const [data, setData] = useState<any[]>([]);
@@ -44,7 +45,7 @@ export default function AdminKaryawan() {
 
       {loading ? <div>Loading...</div> : (
         <div className="overflow-x-auto bg-white rounded shadow">
-          <table className="min-w-full">
+          <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIK</th>
@@ -85,54 +86,14 @@ export default function AdminKaryawan() {
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
             <h2 className="text-xl font-semibold mb-4">{editData ? 'Edit Karyawan' : 'Tambah Karyawan'}</h2>
-            <form onSubmit={e => { e.preventDefault(); const form = e.target as HTMLFormElement; const values = Object.fromEntries(new FormData(form)); const payload = { nik: values['nik'], nama: values['nama'], tempat_lahir: values['tempat_lahir'], tanggal_lahir: values['tanggal_lahir'], alamat: values['alamat'], kontrak_awal: values['kontrak_awal'], kontrak_akhir: values['kontrak_akhir'], bpjs_tk: values['bpjs_tk'], bpjs_kesehatan: values['bpjs_kesehatan'] }; (editData ? handleEdit : handleCreate)(payload); }} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">NIK</label>
-                <input name="nik" defaultValue={editData?.nik || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Nama</label>
-                <input name="nama" defaultValue={editData?.nama || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Tempat Lahir</label>
-                  <input name="tempat_lahir" defaultValue={editData?.tempat_lahir || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
-                  <input type="date" name="tanggal_lahir" defaultValue={editData?.tanggal_lahir || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Alamat</label>
-                <input name="alamat" defaultValue={editData?.alamat || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Kontrak Awal</label>
-                  <input type="date" name="kontrak_awal" defaultValue={editData?.kontrak_awal || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Kontrak Akhir</label>
-                  <input type="date" name="kontrak_akhir" defaultValue={editData?.kontrak_akhir || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">BPJS TK</label>
-                  <input name="bpjs_tk" defaultValue={editData?.bpjs_tk || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">BPJS Kesehatan</label>
-                  <input name="bpjs_kesehatan" defaultValue={editData?.bpjs_kesehatan || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-                </div>
-              </div>
-              <div className="pt-4 flex justify-end space-x-3">
-                <button type="button" onClick={() => { setModalOpen(false); setEditData(null); }} className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Batal</button>
-                <button type="submit" className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Simpan</button>
-              </div>
-            </form>
+            <KaryawanForm
+              defaultValues={editData || {}}
+              onSubmit={(values: any) => {
+                const payload = { nik: values.nik, nama: values.nama, tempat_lahir: values.tempat_lahir, tanggal_lahir: values.tanggal_lahir, alamat: values.alamat, kontrak_awal: values.kontrak_awal, kontrak_akhir: values.kontrak_akhir, bpjs_tk: values.bpjs_tk, bpjs_kesehatan: values.bpjs_kesehatan };
+                return (editData ? handleEdit(payload) : handleCreate(payload));
+              }}
+              onCancel={() => { setModalOpen(false); setEditData(null); }}
+            />
           </div>
         </div>
       )}

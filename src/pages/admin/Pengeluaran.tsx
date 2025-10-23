@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getPengeluaranList, createPengeluaran, updatePengeluaran, deletePengeluaran } from '@/integrations/supabase/pengeluaranService';
+import PengeluaranForm from '@/components/forms/PengeluaranForm';
 
 export default function AdminPengeluaran() {
   const [data, setData] = useState<any[]>([]);
@@ -75,28 +76,14 @@ export default function AdminPengeluaran() {
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
             <h2 className="text-xl font-semibold mb-4">{editData ? 'Edit Pengeluaran' : 'Tambah Pengeluaran'}</h2>
-            <form onSubmit={e => { e.preventDefault(); const form = e.target as HTMLFormElement; const values = Object.fromEntries(new FormData(form)); const payload = { tanggal_pengeluaran: values['tanggal_pengeluaran'], kategori_pengeluaran: values['kategori_pengeluaran'], keterangan: values['keterangan'], jumlah: Number(values['jumlah'] || 0) }; (editData ? handleEdit : handleCreate)(payload); }} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Tanggal</label>
-                <input type="date" name="tanggal_pengeluaran" defaultValue={editData?.tanggal_pengeluaran || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Kategori</label>
-                <input name="kategori_pengeluaran" defaultValue={editData?.kategori_pengeluaran || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Keterangan</label>
-                <input name="keterangan" defaultValue={editData?.keterangan || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Jumlah</label>
-                <input type="number" name="jumlah" defaultValue={editData?.jumlah || ''} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-              </div>
-              <div className="pt-4 flex justify-end space-x-3">
-                <button type="button" onClick={() => { setModalOpen(false); setEditData(null); }} className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Batal</button>
-                <button type="submit" className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Simpan</button>
-              </div>
-            </form>
+            <PengeluaranForm
+              defaultValues={editData || {}}
+              onSubmit={(values: any) => {
+                const payload = { tanggal_pengeluaran: values.tanggal_pengeluaran, kategori_pengeluaran: values.kategori_pengeluaran, keterangan: values.keterangan, jumlah: Number(values.jumlah || 0) };
+                return (editData ? handleEdit(payload) : handleCreate(payload));
+              }}
+              onCancel={() => { setModalOpen(false); setEditData(null); }}
+            />
           </div>
         </div>
       )}
