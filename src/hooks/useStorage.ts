@@ -1,14 +1,15 @@
 import { supabase } from '@/integrations/supabase';
-import { v4 as uuidv4 } from 'uuid';
+
 
 export const useStorage = () => {
   const uploadImage = async (file: File) => {
     try {
       if (!file) return null;
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${uuidv4()}.${fileExt}`;
-      const filePath = `pelatihan/${fileName}`;
+  const fileExt = file.name.split('.').pop();
+  // simple filename generator to avoid external uuid dependency
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}${fileExt ? '.' + fileExt : ''}`;
+  const filePath = `pelatihan/${fileName}`;
 
       const { data, error } = await supabase.storage
         .from('media')
@@ -33,7 +34,16 @@ export const useStorage = () => {
 
   const deleteImage = async (url: string) => {
     try {
-      const path = url.split('/media/').pop();
+      // handle urls like https://xyz.supabase.co/storage/v1/object/public/media/pelatihan/filename.jpg
+      // or direct stored path 'pelatihan/filename.jpg'
+      let path = url;
+      if (url.includes('/storage/v1/object/public/')) {
+        path = url.split('/storage/v1/object/public/')[1];
+      } else if (url.includes('/media/')) {
+        path = url.split('/media/')[1];
+      }
+      // remove query params
+      path = path.split('?')[0];
       if (!path) return;
 
       const { error } = await supabase.storage

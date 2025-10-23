@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useStorage } from '@/hooks/useStorage';
 
@@ -14,11 +14,18 @@ type FormValues = {
 };
 
 export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any) {
-  const { register, handleSubmit, setValue, watch } = useForm<FormValues>({ defaultValues });
+  const { register, handleSubmit, setValue, watch, reset } = useForm<FormValues>({ defaultValues });
   const { uploadImage, deleteImage } = useStorage();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currentImage = watch('gambar_url');
+
+  useEffect(() => {
+    // reset form values when defaultValues change (important for edit flow)
+    if (defaultValues) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, reset]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,6 +65,8 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      {/* ensure gambar_url is registered so it's included in submit payload */}
+      <input type="hidden" {...register('gambar_url')} />
       <label>Nama Pelatihan</label>
       <input className="w-full p-2 border rounded" {...register('nama_pelatihan')} />
 
@@ -113,7 +122,9 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
 
       <div className="mt-4 flex justify-end gap-2">
         <button type="button" className="px-3 py-2 bg-gray-200 rounded" onClick={onCancel}>Batal</button>
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded" disabled={isUploading}>
+          {isUploading ? 'Mengunggah...' : 'Simpan'}
+        </button>
       </div>
     </form>
   );
