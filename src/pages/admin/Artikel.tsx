@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import ArtikelForm from '@/components/forms/ArtikelForm';
 import { createArtikel, updateArtikel, deleteArtikel } from '@/integrations/supabase/artikelService';
-import { Artikel } from '@/types'
 import { useArtikelList } from '@/hooks/useArtikel';
+import { Artikel } from '@/types'
 import { toast } from 'sonner';
 
 export default function AdminArtikel() {
