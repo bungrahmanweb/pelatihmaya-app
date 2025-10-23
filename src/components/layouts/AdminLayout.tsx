@@ -10,12 +10,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
       console.log('Current session:', session);
       setSession(session);
       setLoading(false);
-      if (!session) {
+      
+      if (!session && window.location.pathname !== '/auth') {
         navigate('/auth');
       }
     });
@@ -24,9 +28,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
       console.log('Auth state changed:', event, session);
       setSession(session);
-      if (!session) {
+      
+      if (!session && window.location.pathname !== '/auth') {
         navigate('/auth');
       }
     });
