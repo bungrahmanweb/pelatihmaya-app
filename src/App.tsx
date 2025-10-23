@@ -61,8 +61,8 @@ const App = () => (
           <Route path="/admin/pelatihan" element={<AdminLayout><AdminPelatihan /></AdminLayout>} />
           <Route path="/admin/peserta" element={<AdminLayout><AdminPeserta /></AdminLayout>} />
           <Route path="/admin/pembayaran" element={<AdminLayout><AdminPembayaran /></AdminLayout>} />
-          <Route path="/admin/pembayaran/invoice/:id" element={<AdminLayout><InvoicePembayaranPage /></AdminLayout>} />
           <Route path="/admin/pembayaran/invoice/peserta/:pesertaId" element={<AdminLayout><InvoicePesertaPage /></AdminLayout>} />
+          <Route path="/admin/pembayaran/invoice/:id" element={<AdminLayout><InvoicePembayaranPage /></AdminLayout>} />
           <Route path="/admin/pengeluaran" element={<AdminLayout><AdminPengeluaran /></AdminLayout>} />
           <Route path="/admin/karyawan" element={<AdminLayout><AdminKaryawan /></AdminLayout>} />
           <Route path="/admin/laporan" element={<AdminLayout><AdminLaporan /></AdminLayout>} />
