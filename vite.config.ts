@@ -8,6 +8,14 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    strictPort: true,
+    middlewareMode: false,
+  },
+  preview: {
+    port: 8080,
+    strictPort: true,
+    host: true,
+    origin: 'http://localhost:8080',
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
