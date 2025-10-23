@@ -31,8 +31,8 @@ export default function AdminPeserta() {
 
     return peserta.filter(p => {
       const matchesStatus = filterStatus === 'all' ||
-        (filterStatus === 'lunas' && p.total_pembayaran >= selectedPelatihan.harga_pelatihan) ||
-        (filterStatus === 'belum-lunas' && p.total_pembayaran < selectedPelatihan.harga_pelatihan);
+        (filterStatus === 'lunas' && (p.total_pembayaran || 0) >= selectedPelatihan.harga_pelatihan) ||
+        (filterStatus === 'belum-lunas' && (!p.total_pembayaran || p.total_pembayaran < selectedPelatihan.harga_pelatihan));
 
       const matchesSearch = !searchQuery ||
         p.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -140,26 +140,63 @@ export default function AdminPeserta() {
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-4">Data Peserta</h1>
       
-      <div className="mb-4">
-        <label htmlFor="pelatihan" className="block text-sm font-medium text-gray-700">
-          Pilih Pelatihan
-        </label>
-        <select
-          id="pelatihan"
-          value={selectedPelatihanId}
-          onChange={(e) => setSelectedPelatihanId(e.target.value)}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-        >
-          <option value="">Pilih Pelatihan</option>
-          {pelatihan?.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.nama_pelatihan} - Batch {item.batch_pelatihan}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {selectedPelatihanId && (
+          <div className="mb-4 space-y-4">
+            <div>
+              <label htmlFor="pelatihan" className="block text-sm font-medium text-gray-700">
+                Pilih Pelatihan
+              </label>
+              <select
+                id="pelatihan"
+                value={selectedPelatihanId}
+                onChange={(e) => {
+                  setSelectedPelatihanId(e.target.value);
+                  setFilterStatus('all');
+                  setSearchQuery('');
+                }}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+              >
+                <option value="">Pilih Pelatihan</option>
+                {pelatihan?.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.nama_pelatihan} - Batch {item.batch_pelatihan}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {selectedPelatihanId && (
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label htmlFor="filter" className="block text-sm font-medium text-gray-700">
+                    Filter Status
+                  </label>
+                  <select
+                    id="filter"
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value as 'all' | 'lunas' | 'belum-lunas')}
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  >
+                    <option value="all">Semua Status</option>
+                    <option value="lunas">Lunas</option>
+                    <option value="belum-lunas">Belum Lunas</option>
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+                    Cari Peserta
+                  </label>
+                  <input
+                    type="text"
+                    id="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Cari nama atau NIK..."
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  />
+                </div>
+              </div>
+            )}
+          </div>      {selectedPelatihanId && (
         <div className="flex space-x-4">
           <button 
             className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" 
