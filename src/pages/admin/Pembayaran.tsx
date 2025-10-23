@@ -8,6 +8,7 @@ import PembayaranForm from '@/components/forms/PembayaranForm';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import PembayaranInvoice from '@/components/invoice/PembayaranInvoice';
+import AsyncSelect from 'react-select/async';
 
 export default function AdminPembayaran() {
   const [selectedPelatihanId, setSelectedPelatihanId] = useState('');
@@ -27,6 +28,13 @@ export default function AdminPembayaran() {
     data: peserta,
     isLoading: loadingPeserta
   } = usePesertaByPelatihan(selectedPelatihanId);
+  const [pesertaQuery, setPesertaQuery] = useState('');
+
+  const filteredPeserta = peserta?.filter((p: any) => {
+    if (!pesertaQuery) return true;
+    const q = pesertaQuery.toLowerCase();
+    return (p.nama || '').toLowerCase().includes(q) || (p.nik || '').toLowerCase().includes(q);
+  }) || [];
 
   const {
     data: pembayaran,
@@ -114,18 +122,24 @@ export default function AdminPembayaran() {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Pilih Peserta
           </label>
-          <select
-            value={selectedPesertaId}
-            onChange={(e) => setSelectedPesertaId(e.target.value)}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-          >
-            <option value="">Pilih Peserta</option>
-            {peserta?.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.nama} - {p.nik}
-              </option>
-            ))}
-          </select>
+          <AsyncSelect
+            cacheOptions
+            defaultOptions={filteredPeserta.map((p: any) => ({ value: p.id, label: `${p.nama} - ${p.nik}`, data: p }))}
+            loadOptions={(inputValue, callback) => {
+              const q = inputValue.toLowerCase();
+              const results = filteredPeserta
+                .filter((p: any) => (p.nama || '').toLowerCase().includes(q) || (p.nik || '').toLowerCase().includes(q))
+                .map((p: any) => ({ value: p.id, label: `${p.nama} - ${p.nik}`, data: p }));
+              callback(results);
+            }}
+            onChange={(option: any) => setSelectedPesertaId(option ? option.value : '')}
+            value={
+              selectedPesertaId
+                ? { value: selectedPesertaId, label: `${selectedPeserta?.nama} - ${selectedPeserta?.nik}` }
+                : null
+            }
+            placeholder="Cari atau pilih peserta..."
+          />
         </div>
       )}
 
