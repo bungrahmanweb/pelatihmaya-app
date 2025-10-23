@@ -107,60 +107,98 @@ export default function AdminPembayaran() {
 
       {/* Info Pembayaran */}
       {selectedPeserta && selectedPelatihanData && (
-        <div className="bg-white p-6 rounded-lg shadow-sm mb-6 border">
-          <div className="flex justify-between items-start mb-4">
-            <h2 className="text-lg font-semibold">Informasi Pembayaran</h2>
-            {totalPembayaran > 0 && (
-              <button
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors print:hidden"
-                onClick={() => window.print()}
-              >
-                Print Invoice
-              </button>
-            )}
+        <>
+          <div className="bg-white p-6 rounded-lg shadow-sm mb-6 border">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-lg font-semibold">Informasi Pembayaran</h2>
+              {totalPembayaran > 0 && (
+                <button
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors print:hidden"
+                  onClick={() => {
+                    setInvoiceData({
+                      peserta: selectedPeserta,
+                      pelatihan: selectedPelatihanData,
+                      pembayaran: pembayaran,
+                      transaksi: null
+                    });
+                    setTimeout(() => window.print(), 100);
+                  }}
+                >
+                  Print Invoice
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">Nama Peserta</p>
+                <p className="font-medium">{selectedPeserta.nama}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">NIK</p>
+                <p className="font-medium">{selectedPeserta.nik}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Nama Pelatihan</p>
+                <p className="font-medium">{selectedPelatihanData.nama_pelatihan}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Kategori Pelatihan</p>
+                <p className="font-medium">{selectedPelatihanData.kategori_pelatihan}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Biaya Pelatihan</p>
+                <p className="font-medium">
+                  {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                    .format(selectedPelatihanData.harga_pelatihan)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Sudah Dibayar</p>
+                <p className="font-medium text-green-600">
+                  {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                    .format(totalPembayaran)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Sisa Pembayaran</p>
+                <p className="font-medium text-red-600">
+                  {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                    .format(sisaPembayaran)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Status</p>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  sisaPembayaran <= 0 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {sisaPembayaran <= 0 ? 'Lunas' : 'Belum Lunas'}
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Nama Peserta</p>
-              <p className="font-medium">{selectedPeserta.nama}</p>
+
+          {/* Invoice Print Area (hidden on screen, shown on print) */}
+          <div className="hidden print:block print-invoice">
+            <h2 style={{ fontWeight: 700, fontSize: 22, marginBottom: 16 }}>INVOICE PEMBAYARAN</h2>
+            <div style={{ marginBottom: 12 }}>
+              <strong>Nama Peserta:</strong> {selectedPeserta.nama}<br />
+              <strong>NIK:</strong> {selectedPeserta.nik}<br />
+              <strong>Nama Pelatihan:</strong> {selectedPelatihanData.nama_pelatihan}<br />
+              <strong>Kategori Pelatihan:</strong> {selectedPelatihanData.kategori_pelatihan}<br />
             </div>
-            <div>
-              <p className="text-sm text-gray-600">NIK</p>
-              <p className="font-medium">{selectedPeserta.nik}</p>
+            <div style={{ marginBottom: 12 }}>
+              <strong>Total Biaya Pelatihan:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(selectedPelatihanData.harga_pelatihan)}<br />
+              <strong>Total Sudah Dibayar:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPembayaran)}<br />
+              <strong>Sisa Pembayaran:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(sisaPembayaran)}<br />
+              <strong>Status:</strong> {sisaPembayaran <= 0 ? 'Lunas' : 'Belum Lunas'}
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Biaya Pelatihan</p>
-              <p className="font-medium">
-                {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
-                  .format(selectedPelatihanData.harga_pelatihan)}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Sudah Dibayar</p>
-              <p className="font-medium text-green-600">
-                {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
-                  .format(totalPembayaran)}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Sisa Pembayaran</p>
-              <p className="font-medium text-red-600">
-                {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
-                  .format(sisaPembayaran)}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Status</p>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                sisaPembayaran <= 0 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {sisaPembayaran <= 0 ? 'Lunas' : 'Belum Lunas'}
-              </span>
+            <div style={{ marginTop: 24, fontSize: 12, color: '#888' }}>
+              Dicetak pada: {new Date().toLocaleString('id-ID')}
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Tabel Pembayaran */}
@@ -200,7 +238,21 @@ export default function AdminPembayaran() {
                         {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(row.jumlah)}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">{row.keterangan}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
+                        <button
+                          className="text-blue-600 hover:text-blue-900"
+                          onClick={() => {
+                            setInvoiceData({
+                              peserta: selectedPeserta,
+                              pelatihan: selectedPelatihanData,
+                              pembayaran: pembayaran,
+                              transaksi: row
+                            });
+                            setTimeout(() => window.print(), 100);
+                          }}
+                        >
+                          Print Invoice
+                        </button>
                         <button
                           className="text-red-600 hover:text-red-900"
                           onClick={() => handleDelete(row.id)}
