@@ -42,7 +42,8 @@ export default function AdminPeserta() {
     });
   }, [peserta, pelatihan, selectedPelatihanId, filterStatus, searchQuery]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editData, setEditData] = useState<Peserta | null>(null);
+    const [editData, setEditData] = useState<any>(null);
+  const selectedPel = pelatihan?.find(p => p.id === selectedPelatihanId);
 
   const handleExport = () => {
     if (!peserta || peserta.length === 0) {
@@ -138,9 +139,16 @@ export default function AdminPeserta() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Data Peserta</h1>
-      
-          <div className="mb-4 space-y-4">
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">Data Peserta</h1>
+          {selectedPel && (
+            <div className="text-sm text-gray-600">{selectedPel.nama_pelatihan} • Batch {selectedPel.batch_pelatihan} • <span className="font-medium">{selectedPel.status === 'SELESAI' ? 'Selesai' : 'Akan Datang'}</span></div>
+          )}
+        </div>
+      </div>
+
+      <div className="mb-4 space-y-4">
             <div>
               <label htmlFor="pelatihan" className="block text-sm font-medium text-gray-700">
                 Pilih Pelatihan

@@ -8,6 +8,7 @@ type FormValues = {
   tanggal_pelaksanaan: string;
   harga_pelatihan: number;
   deskripsi?: string;
+  status?: 'SELESAI' | 'AKAN_DATANG';
 };
 
 export default function PelatihanForm({ defaultValues, onSubmit }: any) {
@@ -15,24 +16,33 @@ export default function PelatihanForm({ defaultValues, onSubmit }: any) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <label>Nama Pelatihan</label>
-      <input {...register('nama_pelatihan')} />
+      <input className="w-full p-2 border rounded" {...register('nama_pelatihan')} />
 
       <label>Kategori</label>
-      <input {...register('kategori_pelatihan')} />
+      <input className="w-full p-2 border rounded" {...register('kategori_pelatihan')} />
 
       <label>Batch</label>
-      <input {...register('batch_pelatihan')} />
+      <input className="w-full p-2 border rounded" {...register('batch_pelatihan')} />
 
       <label>Tanggal</label>
-      <input type="date" {...register('tanggal_pelaksanaan')} />
+      <input className="w-full p-2 border rounded" type="date" {...register('tanggal_pelaksanaan')} />
 
       <label>Harga</label>
-      <input type="number" {...register('harga_pelatihan', { valueAsNumber: true })} />
+      <input className="w-full p-2 border rounded" type="number" {...register('harga_pelatihan', { valueAsNumber: true })} />
 
       <label>Deskripsi</label>
-      <textarea {...register('deskripsi')} />
+      <textarea className="w-full p-2 border rounded" {...register('deskripsi')} />
 
-      <button type="submit">Simpan</button>
+      <label className="mt-3">Status</label>
+      <select className="w-full p-2 border rounded" {...register('status')}> 
+        <option value="AKAN_DATANG">Akan Datang</option>
+        <option value="SELESAI">Selesai</option>
+      </select>
+
+      <div className="mt-4 flex justify-end gap-2">
+        <button type="button" className="px-3 py-2 bg-gray-200 rounded" onClick={() => window.dispatchEvent(new Event('close-modal'))}>Batal</button>
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+      </div>
     </form>
   );
 }
