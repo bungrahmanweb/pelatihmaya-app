@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,6 +26,9 @@ import AdminPengeluaran from "@/pages/admin/Pengeluaran";
 import AdminKaryawan from "@/pages/admin/Karyawan";
 import AdminLaporan from "@/pages/admin/Laporan";
 import AdminUsers from "@/pages/admin/Users";
+
+// ✅ Tambahkan import halaman baru ini
+import AdminArtikel from "@/pages/admin/Artikel";
 
 import NotFound from "@/pages/NotFound";
 
@@ -67,6 +70,9 @@ const App = () => (
           <Route path="/admin/karyawan" element={<AdminLayout><AdminKaryawan /></AdminLayout>} />
           <Route path="/admin/laporan" element={<AdminLayout><AdminLaporan /></AdminLayout>} />
           <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
+
+          {/* ✅ Route baru untuk Artikel */}
+          <Route path="/admin/artikel" element={<AdminLayout><AdminArtikel /></AdminLayout>} />
           
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

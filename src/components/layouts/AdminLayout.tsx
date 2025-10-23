@@ -134,6 +134,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <FileText className="w-4 h-4" />
               Laporan
             </NavLink>
+            <NavLink
+              to="/admin/artikel"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
+            >
+              <FileText className="w-4 h-4" />
+              Artikel
+            </NavLink>
+
             <button
               onClick={() => supabase.auth.signOut()}
               className="flex w-full items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground text-destructive"
