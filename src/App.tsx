@@ -14,6 +14,7 @@ import Kontak from "@/pages/Kontak";
 import Auth from "@/pages/Auth";
 
 // Admin Pages
+import AdminLayout from "@/components/layouts/AdminLayout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminPelatihan from "@/pages/admin/Pelatihan";
 import AdminPeserta from "@/pages/admin/Peserta";
@@ -45,14 +46,14 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/pelatihan" element={<AdminPelatihan />} />
-          <Route path="/admin/peserta" element={<AdminPeserta />} />
-          <Route path="/admin/pembayaran" element={<AdminPembayaran />} />
-          <Route path="/admin/pengeluaran" element={<AdminPengeluaran />} />
-          <Route path="/admin/karyawan" element={<AdminKaryawan />} />
-          <Route path="/admin/laporan" element={<AdminLaporan />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/admin/pelatihan" element={<AdminLayout><AdminPelatihan /></AdminLayout>} />
+          <Route path="/admin/peserta" element={<AdminLayout><AdminPeserta /></AdminLayout>} />
+          <Route path="/admin/pembayaran" element={<AdminLayout><AdminPembayaran /></AdminLayout>} />
+          <Route path="/admin/pengeluaran" element={<AdminLayout><AdminPengeluaran /></AdminLayout>} />
+          <Route path="/admin/karyawan" element={<AdminLayout><AdminKaryawan /></AdminLayout>} />
+          <Route path="/admin/laporan" element={<AdminLayout><AdminLaporan /></AdminLayout>} />
+          <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
           
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
