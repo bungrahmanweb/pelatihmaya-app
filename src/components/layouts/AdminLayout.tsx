@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
+import { LayoutDashboard, GraduationCap, Users, CreditCard, DollarSign, Briefcase, FileText, LogOut } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
@@ -50,52 +51,88 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <h2 className="text-lg font-bold">Admin Panel</h2>
           </div>
           <nav className="space-y-1 p-2">
-            <a
-              href="/admin"
-              className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground"
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
             >
+              <LayoutDashboard className="w-4 h-4" />
               Dashboard
-            </a>
-            <a
-              href="/admin/pelatihan"
-              className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground"
+            </NavLink>
+            <NavLink
+              to="/admin/pelatihan"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
             >
+              <GraduationCap className="w-4 h-4" />
               Pelatihan
-            </a>
-            <a
-              href="/admin/peserta"
-              className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground"
+            </NavLink>
+            <NavLink
+              to="/admin/peserta"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
             >
+              <Users className="w-4 h-4" />
               Peserta
-            </a>
-            <a
-              href="/admin/pembayaran"
-              className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground"
+            </NavLink>
+            <NavLink
+              to="/admin/pembayaran"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
             >
+              <CreditCard className="w-4 h-4" />
               Pembayaran
-            </a>
-            <a
-              href="/admin/pengeluaran"
-              className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground"
+            </NavLink>
+            <NavLink
+              to="/admin/pengeluaran"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
             >
+              <DollarSign className="w-4 h-4" />
               Pengeluaran
-            </a>
-            <a
-              href="/admin/karyawan"
-              className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground"
+            </NavLink>
+            <NavLink
+              to="/admin/karyawan"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
             >
+              <Briefcase className="w-4 h-4" />
               Karyawan
-            </a>
-            <a
-              href="/admin/laporan"
-              className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground"
+            </NavLink>
+            <NavLink
+              to="/admin/laporan"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
             >
+              <FileText className="w-4 h-4" />
               Laporan
-            </a>
+            </NavLink>
             <button
               onClick={() => supabase.auth.signOut()}
-              className="flex w-full items-center px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground text-destructive"
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground text-destructive"
             >
+              <LogOut className="w-4 h-4" />
               Logout
             </button>
           </nav>
