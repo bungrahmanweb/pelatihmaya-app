@@ -67,21 +67,27 @@ export default function PembayaranInvoice({ pembayaran }: PembayaranInvoiceProps
             <p className="text-gray-600">Maya Beauty Training Center</p>
           </div>
 
-          {/* Invoice Details */}
-          <div className="mb-8">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-gray-600">No. Invoice:</p>
-                <p className="font-medium">INV-{pembayaran.id.slice(0, 8).toUpperCase()}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-gray-600">Tanggal Pembayaran:</p>
-                <p className="font-medium">
-                  {format(new Date(pembayaran.tanggal_pembayaran), 'dd MMMM yyyy', { locale: id })}
-                </p>
+            {/* Invoice Details */}
+            <div className="mb-8">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-gray-600">No. Invoice:</p>
+                  <p className="font-medium">
+                    {isDetailView 
+                      ? `INV-${pembayaran.id?.slice(0, 8).toUpperCase()}` 
+                      : 'REKAP PEMBAYARAN'}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600">Tanggal:</p>
+                  <p className="font-medium">
+                    {isDetailView 
+                      ? format(new Date(pembayaran.tanggal_pembayaran || new Date()), 'dd MMMM yyyy', { locale: id })
+                      : format(new Date(), 'dd MMMM yyyy', { locale: id })}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
           {/* Peserta Details */}
           <div className="mb-8">
