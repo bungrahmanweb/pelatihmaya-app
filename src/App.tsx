@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -58,7 +59,6 @@ const App = () => (
           <Route path="/admin/pelatihan" element={<AdminLayout><AdminPelatihan /></AdminLayout>} />
           <Route path="/admin/peserta" element={<AdminLayout><AdminPeserta /></AdminLayout>} />
           <Route path="/admin/pembayaran" element={<AdminLayout><AdminPembayaran /></AdminLayout>} />
-          <Route path="/admin/pembayaran/invoice/:id" element={<PembayaranInvoice />} />
           <Route path="/admin/pengeluaran" element={<AdminLayout><AdminPengeluaran /></AdminLayout>} />
           <Route path="/admin/karyawan" element={<AdminLayout><AdminKaryawan /></AdminLayout>} />
           <Route path="/admin/laporan" element={<AdminLayout><AdminLaporan /></AdminLayout>} />
