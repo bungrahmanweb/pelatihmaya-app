@@ -56,3 +56,19 @@ export async function deletePembayaran(id: string) {
     throw new Error(`Failed to delete pembayaran: ${error.message}`);
   }
 }
+
+export async function getPembayaranById(id: string) {
+  try {
+    const { data, error } = await supabase
+      .from(table)
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching pembayaran by id:', error.message);
+    throw new Error(`Failed to fetch pembayaran: ${error.message}`);
+  }
+}

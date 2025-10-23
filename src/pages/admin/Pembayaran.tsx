@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createPembayaran, deletePembayaran } from '@/integrations/supabase/pembayaranService';
 import { usePelatihanList } from '@/hooks/usePelatihan';
 import { usePesertaByPelatihan } from '@/hooks/usePeserta';
@@ -6,11 +7,16 @@ import { usePembayaranByPeserta } from '@/hooks/usePembayaran';
 import PembayaranForm from '@/components/forms/PembayaranForm';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
+import PembayaranInvoice from '@/components/invoice/PembayaranInvoice';
 
 export default function AdminPembayaran() {
   const [selectedPelatihanId, setSelectedPelatihanId] = useState('');
   const [selectedPesertaId, setSelectedPesertaId] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewType, setPreviewType] = useState<'peserta' | 'pembayaran' | null>(null);
+  const [previewPembayaran, setPreviewPembayaran] = useState<any>(null);
 
   const { 
     data: pelatihan,
@@ -112,20 +118,29 @@ export default function AdminPembayaran() {
             <div className="flex justify-between items-start mb-4">
               <h2 className="text-lg font-semibold">Informasi Pembayaran</h2>
               {totalPembayaran > 0 && (
-                <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors print:hidden"
-                  onClick={() => {
-                    setInvoiceData({
-                      peserta: selectedPeserta,
-                      pelatihan: selectedPelatihanData,
-                      pembayaran: pembayaran,
-                      transaksi: null
-                    });
-                    setTimeout(() => window.print(), 100);
-                  }}
-                >
-                  Print Invoice
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors print:hidden"
+                    onClick={() => {
+                      // Open peserta invoice summary in new tab for auto print
+                      if (selectedPesertaId) {
+                        window.open(`/admin/pembayaran/invoice/peserta/${selectedPesertaId}?autoPrint=1`, '_blank');
+                      }
+                    }}
+                  >
+                    Print Invoice
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-white text-gray-700 border rounded hover:bg-gray-50 print:hidden"
+                    onClick={() => {
+                      // Open modal preview for peserta summary
+                      setPreviewType('peserta');
+                      setPreviewOpen(true);
+                    }}
+                  >
+                    Preview
+                  </button>
+                </div>
               )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -240,15 +255,21 @@ export default function AdminPembayaran() {
                       <td className="px-6 py-4 text-sm text-gray-500">{row.keterangan}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
                         <button
+                            className="text-blue-600 hover:text-blue-900"
+                          onClick={() => {
+                            // Open modal preview for this pembayaran
+                            setPreviewType('pembayaran');
+                            setPreviewPembayaran(row);
+                            setPreviewOpen(true);
+                          }}
+                        >
+                          Preview
+                        </button>
+                        <button
                           className="text-blue-600 hover:text-blue-900"
                           onClick={() => {
-                            setInvoiceData({
-                              peserta: selectedPeserta,
-                              pelatihan: selectedPelatihanData,
-                              pembayaran: pembayaran,
-                              transaksi: row
-                            });
-                            setTimeout(() => window.print(), 100);
+                            // Open invoice page for specific pembayaran in new tab
+                            window.open(`/admin/pembayaran/invoice/${row.id}?autoPrint=1`, '_blank');
                           }}
                         >
                           Print Invoice
@@ -290,6 +311,42 @@ export default function AdminPembayaran() {
               onSubmit={handleCreate}
               onCancel={() => setModalOpen(false)}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Preview Modal */}
+      {previewOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white rounded shadow-lg max-w-4xl w-full">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h3 className="text-lg font-medium">Preview Invoice</h3>
+              <div className="flex gap-2">
+                <button className="px-3 py-1 bg-white border rounded" onClick={() => window.print()}>Download PDF</button>
+                <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => window.open(previewType === 'pembayaran' && previewPembayaran ? `/admin/pembayaran/invoice/${previewPembayaran.id}?autoPrint=1` : `/admin/pembayaran/invoice/peserta/${selectedPesertaId}?autoPrint=1`, '_blank')}>Print</button>
+                <button className="px-3 py-1 bg-gray-200 rounded" onClick={() => setPreviewOpen(false)}>Close</button>
+              </div>
+            </div>
+            <div className="p-6 overflow-auto max-h-[80vh]">
+              {previewType === 'pembayaran' && previewPembayaran ? (
+                <PembayaranInvoice pembayaran={previewPembayaran} />
+              ) : (
+                <div>
+                  <h2 style={{ fontWeight: 700, fontSize: 22, marginBottom: 16 }}>INVOICE PEMBAYARAN</h2>
+                  <div style={{ marginBottom: 12 }}>
+                    <strong>Nama Peserta:</strong> {selectedPeserta?.nama}<br />
+                    <strong>NIK:</strong> {selectedPeserta?.nik}<br />
+                    <strong>Nama Pelatihan:</strong> {selectedPelatihanData?.nama_pelatihan}<br />
+                    <strong>Kategori Pelatihan:</strong> {selectedPelatihanData?.kategori_pelatihan}<br />
+                  </div>
+                  <div style={{ marginBottom: 12 }}>
+                    <strong>Total Biaya Pelatihan:</strong> {selectedPelatihanData ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(selectedPelatihanData.harga_pelatihan) : '-'}<br />
+                    <strong>Total Sudah Dibayar:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPembayaran)}<br />
+                    <strong>Sisa Pembayaran:</strong> {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(sisaPembayaran)}<br />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

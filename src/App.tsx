@@ -20,6 +20,8 @@ import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminPelatihan from "@/pages/admin/Pelatihan";
 import AdminPeserta from "@/pages/admin/Peserta";
 import AdminPembayaran from "@/pages/admin/Pembayaran";
+import InvoicePembayaranPage from "@/pages/admin/InvoicePembayaran";
+import InvoicePesertaPage from "@/pages/admin/InvoicePeserta";
 import AdminPengeluaran from "@/pages/admin/Pengeluaran";
 import AdminKaryawan from "@/pages/admin/Karyawan";
 import AdminLaporan from "@/pages/admin/Laporan";
@@ -59,6 +61,8 @@ const App = () => (
           <Route path="/admin/pelatihan" element={<AdminLayout><AdminPelatihan /></AdminLayout>} />
           <Route path="/admin/peserta" element={<AdminLayout><AdminPeserta /></AdminLayout>} />
           <Route path="/admin/pembayaran" element={<AdminLayout><AdminPembayaran /></AdminLayout>} />
+          <Route path="/admin/pembayaran/invoice/:id" element={<AdminLayout><InvoicePembayaranPage /></AdminLayout>} />
+          <Route path="/admin/pembayaran/invoice/peserta/:pesertaId" element={<AdminLayout><InvoicePesertaPage /></AdminLayout>} />
           <Route path="/admin/pengeluaran" element={<AdminLayout><AdminPengeluaran /></AdminLayout>} />
           <Route path="/admin/karyawan" element={<AdminLayout><AdminKaryawan /></AdminLayout>} />
           <Route path="/admin/laporan" element={<AdminLayout><AdminLaporan /></AdminLayout>} />
