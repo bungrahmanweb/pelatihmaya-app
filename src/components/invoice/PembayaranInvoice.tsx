@@ -18,9 +18,10 @@ interface PembayaranInvoiceProps {
     total_pembayaran?: number;
     sisa_pembayaran?: number;
   };
+  showControls?: boolean;
 }
 
-export default function PembayaranInvoice({ pembayaran }: PembayaranInvoiceProps) {
+export default function PembayaranInvoice({ pembayaran, showControls }: PembayaranInvoiceProps) {
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
   const { data: fetchedPeserta } = usePeserta(pembayaran.peserta_id);
@@ -44,20 +45,22 @@ export default function PembayaranInvoice({ pembayaran }: PembayaranInvoiceProps
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-3xl mx-auto">
         {/* Print Controls - hidden when printing */}
-        <div className="mb-6 print:hidden flex justify-between items-center">
-          <button
-            onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-          >
-            Kembali
-          </button>
-          <button
-            onClick={() => window.print()}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Print Invoice
-          </button>
-        </div>
+        {showControls !== false && (
+          <div className="mb-6 print:hidden flex justify-between items-center">
+            <button
+              onClick={() => navigate(-1)}
+              className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+            >
+              Kembali
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Print Invoice
+            </button>
+          </div>
+        )}
 
         {/* Invoice Content */}
         <div ref={printRef} className="bg-white shadow-lg rounded-lg p-8">

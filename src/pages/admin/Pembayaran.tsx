@@ -53,6 +53,24 @@ export default function AdminPembayaran() {
   const totalPembayaran = pembayaran?.reduce((sum, p) => sum + p.jumlah, 0) || 0;
   const sisaPembayaran = selectedPelatihanData ? selectedPelatihanData.harga_pelatihan - totalPembayaran : 0;
 
+  const printInvoiceModal = () => {
+    const content = document.getElementById('invoice-printable');
+    if (!content) return;
+    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+      .map((n) => n.outerHTML)
+      .join('\n');
+    const newWin = window.open('', '_blank');
+    if (!newWin) return;
+    newWin.document.open();
+    newWin.document.write(`<!doctype html><html><head><meta charset="utf-8">${styles}</head><body>${content.innerHTML}</body></html>`);
+    newWin.document.close();
+    newWin.focus();
+    setTimeout(() => {
+      newWin.print();
+      // optionally close: newWin.close();
+    }, 500);
+  };
+
   if (loadingPelatihan) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -283,24 +301,29 @@ export default function AdminPembayaran() {
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="text-lg font-medium">Preview Invoice</h3>
               <div className="flex gap-2">
-                <button className="px-3 py-1 bg-white border rounded" onClick={() => window.print()}>Download PDF</button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => window.open(previewType === 'pembayaran' && previewPembayaran ? `/admin/pembayaran/invoice/${previewPembayaran.id}?autoPrint=1` : `/admin/pembayaran/invoice/peserta/${selectedPesertaId}?autoPrint=1`, '_blank')}>Print</button>
                 <button className="px-3 py-1 bg-gray-200 rounded" onClick={() => setPreviewOpen(false)}>Close</button>
               </div>
             </div>
             <div className="p-6 overflow-auto max-h-[80vh]">
-              <PembayaranInvoice 
-                pembayaran={
-                  previewType === 'pembayaran' && previewPembayaran 
-                    ? previewPembayaran 
-                    : {
-                        peserta: selectedPeserta,
-                        pelatihan: selectedPelatihanData,
-                        total_pembayaran: totalPembayaran,
-                        sisa_pembayaran: sisaPembayaran
-                      }
-                } 
-              />
+              <div id="invoice-printable">
+                <PembayaranInvoice 
+                  pembayaran={
+                    previewType === 'pembayaran' && previewPembayaran 
+                      ? previewPembayaran 
+                      : {
+                          peserta: selectedPeserta,
+                          pelatihan: selectedPelatihanData,
+                          total_pembayaran: totalPembayaran,
+                          sisa_pembayaran: sisaPembayaran
+                        }
+                  } 
+                  showControls={false}
+                />
+              </div>
+            </div>
+            <div className="p-4 border-t flex justify-end gap-2">
+              <button className="px-3 py-1 bg-gray-200 rounded" onClick={() => setPreviewOpen(false)}>Close</button>
+              <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={printInvoiceModal}>Print</button>
             </div>
           </div>
         </div>
