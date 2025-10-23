@@ -28,24 +28,16 @@ export default function AdminPembayaran() {
     refetch: refetchPembayaran
   } = usePembayaranByPeserta(selectedPesertaId);
 
-  const fetchData = async () => {
-    setLoading(true);
-    const res = await getPembayaranByPeserta(pesertaId);
-    setData(res);
-    setLoading(false);
-  };
-
-  React.useEffect(() => { if (pesertaId) fetchData(); }, [pesertaId]);
-
   const handleCreate = async (values: any) => {
-    await createPembayaran({ ...values, peserta_id: pesertaId });
+    const result = await createPembayaran(values);
     setModalOpen(false);
-    fetchData();
+    refetchPembayaran();
+    return { id: result.id };
   };
   const handleDelete = async (id: string) => {
     if (window.confirm('Hapus pembayaran ini?')) {
       await deletePembayaran(id);
-      fetchData();
+      refetchPembayaran();
     }
   };
 

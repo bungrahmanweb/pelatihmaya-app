@@ -21,10 +21,7 @@ export default function PembayaranForm({ defaultValues, maxPembayaran, onSubmit,
   });
 
   return (
-    <form onSubmit={handleSubmit(async (data) => {
-      const result = await onSubmit(data);
-      navigate(`/pembayaran/${result.id}/invoice`);
-    })} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Tanggal Pembayaran
