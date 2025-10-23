@@ -14,16 +14,269 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      karyawan: {
+        Row: {
+          alamat: string
+          bpjs_kesehatan: string | null
+          bpjs_tk: string | null
+          created_at: string | null
+          id: string
+          kontrak_akhir: string
+          kontrak_awal: string
+          nama: string
+          nik: string
+          tanggal_lahir: string
+          tempat_lahir: string
+          updated_at: string | null
+        }
+        Insert: {
+          alamat: string
+          bpjs_kesehatan?: string | null
+          bpjs_tk?: string | null
+          created_at?: string | null
+          id?: string
+          kontrak_akhir: string
+          kontrak_awal: string
+          nama: string
+          nik: string
+          tanggal_lahir: string
+          tempat_lahir: string
+          updated_at?: string | null
+        }
+        Update: {
+          alamat?: string
+          bpjs_kesehatan?: string | null
+          bpjs_tk?: string | null
+          created_at?: string | null
+          id?: string
+          kontrak_akhir?: string
+          kontrak_awal?: string
+          nama?: string
+          nik?: string
+          tanggal_lahir?: string
+          tempat_lahir?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pelatihan: {
+        Row: {
+          batch_pelatihan: string
+          created_at: string | null
+          deskripsi: string | null
+          gambar_url: string | null
+          harga_pelatihan: number
+          id: string
+          kategori_pelatihan: string
+          nama_pelatihan: string
+          tanggal_pelaksanaan: string
+          updated_at: string | null
+        }
+        Insert: {
+          batch_pelatihan: string
+          created_at?: string | null
+          deskripsi?: string | null
+          gambar_url?: string | null
+          harga_pelatihan?: number
+          id?: string
+          kategori_pelatihan: string
+          nama_pelatihan: string
+          tanggal_pelaksanaan: string
+          updated_at?: string | null
+        }
+        Update: {
+          batch_pelatihan?: string
+          created_at?: string | null
+          deskripsi?: string | null
+          gambar_url?: string | null
+          harga_pelatihan?: number
+          id?: string
+          kategori_pelatihan?: string
+          nama_pelatihan?: string
+          tanggal_pelaksanaan?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pembayaran: {
+        Row: {
+          created_at: string | null
+          id: string
+          jumlah: number
+          keterangan: string | null
+          peserta_id: string
+          tanggal_pembayaran: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          jumlah: number
+          keterangan?: string | null
+          peserta_id: string
+          tanggal_pembayaran?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          jumlah?: number
+          keterangan?: string | null
+          peserta_id?: string
+          tanggal_pembayaran?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pembayaran_peserta_id_fkey"
+            columns: ["peserta_id"]
+            isOneToOne: false
+            referencedRelation: "peserta"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pengeluaran: {
+        Row: {
+          created_at: string | null
+          id: string
+          jumlah: number
+          kategori_pengeluaran: string
+          keterangan: string | null
+          tanggal_pengeluaran: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          jumlah: number
+          kategori_pengeluaran: string
+          keterangan?: string | null
+          tanggal_pengeluaran: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          jumlah?: number
+          kategori_pengeluaran?: string
+          keterangan?: string | null
+          tanggal_pengeluaran?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      peserta: {
+        Row: {
+          alamat: string
+          created_at: string | null
+          email: string | null
+          id: string
+          nama: string
+          nik: string
+          pelatihan_id: string
+          tanggal_lahir: string
+          telepon: string | null
+          tempat_lahir: string
+          ukuran_jaket: Database["public"]["Enums"]["ukuran_jaket"]
+          updated_at: string | null
+        }
+        Insert: {
+          alamat: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          nama: string
+          nik: string
+          pelatihan_id: string
+          tanggal_lahir: string
+          telepon?: string | null
+          tempat_lahir: string
+          ukuran_jaket: Database["public"]["Enums"]["ukuran_jaket"]
+          updated_at?: string | null
+        }
+        Update: {
+          alamat?: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          nama?: string
+          nik?: string
+          pelatihan_id?: string
+          tanggal_lahir?: string
+          telepon?: string | null
+          tempat_lahir?: string
+          ukuran_jaket?: Database["public"]["Enums"]["ukuran_jaket"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peserta_pelatihan_id_fkey"
+            columns: ["pelatihan_id"]
+            isOneToOne: false
+            referencedRelation: "pelatihan"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          nama: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id: string
+          nama: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          nama?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "kasir" | "akuntan" | "owner"
+      ukuran_jaket: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +403,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "kasir", "akuntan", "owner"],
+      ukuran_jaket: ["XS", "S", "M", "L", "XL", "XXL", "XXXL"],
+    },
   },
 } as const
