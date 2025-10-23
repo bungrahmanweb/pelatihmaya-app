@@ -6,9 +6,10 @@ type FormValues = {
   judul: string;
   kategori: string;
   tanggal: string;
-  isi: string;
+  konten: string;
   gambar_url?: string;
 };
+
 
 export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) {
   const { register, handleSubmit, setValue, watch, reset } = useForm<FormValues>({ defaultValues });
@@ -64,7 +65,7 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
       <input type="date" className="w-full p-2 border rounded" {...register('tanggal')} />
 
       <label>Isi Artikel</label>
-      <textarea className="w-full p-2 border rounded min-h-[120px]" {...register('isi')} />
+      <textarea className="w-full p-2 border rounded min-h-[120px]" {...register('konten')} />
 
       <label className="mt-3 block">Gambar Artikel</label>
       <div className="mt-2 space-y-2">
