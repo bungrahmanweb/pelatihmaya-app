@@ -88,11 +88,11 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
       <label className="mt-3 block">Gambar Pelatihan</label>
       <div className="mt-2 space-y-2">
         {currentImage && (
-          <div className="relative w-full aspect-video bg-gray-100 rounded-lg overflow-hidden">
-              <img
+          <div className="relative w-40 h-28 bg-gray-100 rounded-lg overflow-hidden">
+            <img
               src={currentImage}
               alt="Preview"
-                className="w-full h-full object-cover"
+              className="w-full h-full object-cover"
             />
             <button
               type="button"

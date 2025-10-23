@@ -71,8 +71,7 @@ export default function AdminPelatihan() {
               onSubmit={editData ? handleEdit : handleCreate}
               onCancel={() => { setModalOpen(false); setEditData(null); }}
             />
-            <button className="mt-4 px-4 py-2 bg-gray-300 rounded" onClick={() => { setModalOpen(false); setEditData(null); }}>Batal</button>
-          </div>
+            </div>
         </div>
       )}
     </div>
