@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useStorage } from '@/hooks/useStorage';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 type FormValues = {
   judul: string;
@@ -10,13 +12,13 @@ type FormValues = {
   gambar_url?: string;
 };
 
-
 export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) {
   const { register, handleSubmit, setValue, watch, reset } = useForm<FormValues>({ defaultValues });
   const { uploadImage, deleteImage } = useStorage();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currentImage = watch('gambar_url');
+  const konten = watch('konten');
 
   useEffect(() => {
     if (defaultValues) reset(defaultValues);
@@ -51,21 +53,60 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
     }
   };
 
+  // ✨ Custom toolbar WYSIWYG
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'blockquote'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link', 'image'],
+      ['clean'],
+    ],
+  };
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'blockquote',
+    'list', 'bullet',
+    'link', 'image',
+  ];
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <input type="hidden" {...register('gambar_url')} />
+      <input type="hidden" {...register('konten')} />
 
       <label>Judul Artikel</label>
-      <input className="w-full p-2 border rounded" {...register('judul')} />
+      <input
+        className="w-full p-2 border rounded"
+        {...register('judul', { required: true })}
+        placeholder="Masukkan judul artikel"
+      />
 
       <label>Kategori</label>
-      <input className="w-full p-2 border rounded" {...register('kategori')} />
+      <input
+        className="w-full p-2 border rounded"
+        {...register('kategori', { required: true })}
+        placeholder="Contoh: Teknologi"
+      />
 
       <label>Tanggal</label>
-      <input type="date" className="w-full p-2 border rounded" {...register('tanggal')} />
+      <input
+        type="date"
+        className="w-full p-2 border rounded"
+        {...register('tanggal', { required: true })}
+      />
 
       <label>Isi Artikel</label>
-      <textarea className="w-full p-2 border rounded min-h-[120px]" {...register('konten')} />
+      <ReactQuill
+        theme="snow"
+        modules={modules}
+        formats={formats}
+        value={konten || ''}
+        onChange={(value) => setValue('konten', value)}
+        placeholder="Tulis isi artikel di sini..."
+        className="bg-white rounded"
+      />
 
       <label className="mt-3 block">Gambar Artikel</label>
       <div className="mt-2 space-y-2">
