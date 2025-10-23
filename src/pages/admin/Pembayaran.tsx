@@ -108,7 +108,17 @@ export default function AdminPembayaran() {
       {/* Info Pembayaran */}
       {selectedPeserta && selectedPelatihanData && (
         <div className="bg-white p-6 rounded-lg shadow-sm mb-6 border">
-          <h2 className="text-lg font-semibold mb-4">Informasi Pembayaran</h2>
+          <div className="flex justify-between items-start mb-4">
+            <h2 className="text-lg font-semibold">Informasi Pembayaran</h2>
+            {totalPembayaran > 0 && (
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors print:hidden"
+                onClick={() => window.print()}
+              >
+                Print Invoice
+              </button>
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-600">Nama Peserta</p>
