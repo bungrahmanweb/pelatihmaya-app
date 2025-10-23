@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useStorage } from '@/hooks/useStorage';
-import Image from 'next/image';
 
 type FormValues = {
   nama_pelatihan: string;
@@ -81,11 +80,10 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
       <div className="mt-2 space-y-2">
         {currentImage && (
           <div className="relative w-full aspect-video bg-gray-100 rounded-lg overflow-hidden">
-            <Image
+              <img
               src={currentImage}
               alt="Preview"
-              fill
-              className="object-cover"
+                className="w-full h-full object-cover"
             />
             <button
               type="button"
