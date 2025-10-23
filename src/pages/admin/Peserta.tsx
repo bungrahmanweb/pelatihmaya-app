@@ -98,12 +98,6 @@ export default function AdminPeserta() {
     }
   };
 
-  const handleCreate = async (values: any) => {
-    await createPeserta({ ...values, pelatihan_id: selectedPelatihanId });
-    setModalOpen(false);
-    refetch();
-  };
-
   if (loadingPelatihan) {
     return <div>Loading data pelatihan...</div>;
   }
