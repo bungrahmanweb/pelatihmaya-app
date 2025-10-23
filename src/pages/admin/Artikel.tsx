@@ -1,140 +1,88 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import React, { useState } from 'react';
 import ArtikelForm from '@/components/forms/ArtikelForm';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { createArtikel, updateArtikel, deleteArtikel } from '@/integrations/supabase/artikelService';
+import { Artikel } from '@/types'
+import { useArtikelList } from '@/hooks/useArtikel';
+import { toast } from 'sonner';
 
-type Artikel = {
-  id?: number;
-  judul: string;
-  kategori: string;
-  isi: string;
-  penulis?: string;
-  gambar_url?: string;
-  created_at?: string;
-};
+export default function AdminArtikel() {
+  const { data, isLoading, error, refetch } = useArtikelList();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editData, setEditData] = useState<any>(null);
 
-export default function Artikel() {
-  const [artikels, setArtikels] = useState<Artikel[]>([]);
-  const [selected, setSelected] = useState<Artikel | null>(null);
-  const [showForm, setShowForm] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const fetchArtikels = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('artikels')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) console.error('Error fetching articles:', error);
-    else setArtikels(data || []);
-    setLoading(false);
+  const handleCreate = async (values: any) => {
+    await createArtikel(values);
+    toast.success('Artikel berhasil ditambahkan');
+    setModalOpen(false);
+    refetch();
   };
 
-  useEffect(() => {
-    fetchArtikels();
-  }, []);
-
-  const handleSave = async (formData: Artikel) => {
-    let res;
-    if (selected) {
-      res = await supabase.from('artikels').update(formData).eq('id', selected.id);
-    } else {
-      res = await supabase.from('artikels').insert([formData]);
-    }
-
-    if (res.error) {
-      alert('Gagal menyimpan artikel');
-      console.error(res.error);
-    } else {
-      fetchArtikels();
-      setShowForm(false);
-      setSelected(null);
-    }
+  const handleEdit = async (values: any) => {
+    if (!editData) return;
+    await updateArtikel(editData.id, values);
+    toast.success('Artikel berhasil diperbarui');
+    setModalOpen(false);
+    setEditData(null);
+    refetch();
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Yakin hapus artikel ini?')) return;
-    const { error } = await supabase.from('artikels').delete().eq('id', id);
-    if (error) alert('Gagal menghapus');
-    else fetchArtikels();
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Yakin ingin menghapus artikel ini?')) {
+      await deleteArtikel(id);
+      toast.success('Artikel dihapus');
+      refetch();
+    }
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-semibold">Manajemen Artikel</h1>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-4">Manajemen Artikel</h1>
+      <div className="flex items-center justify-between mb-4">
         <button
-          onClick={() => { setShowForm(true); setSelected(null); }}
-          className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+          onClick={() => { setEditData(null); setModalOpen(true); }}
         >
-          <Plus size={18} /> Tambah Artikel
+          Tambah Artikel
         </button>
+        <div className="text-sm text-muted">Total: <span className="font-semibold">{data?.length || 0}</span></div>
       </div>
 
-      {showForm ? (
-        <ArtikelForm
-          defaultValues={selected || {}}
-          onSubmit={handleSave}
-          onCancel={() => { setShowForm(false); setSelected(null); }}
-        />
-      ) : loading ? (
-        <div>Memuat data...</div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="p-3">Judul</th>
-                <th className="p-3">Kategori</th>
-                <th className="p-3">Penulis</th>
-                <th className="p-3">Gambar</th>
-                <th className="p-3">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {artikels.map((a) => (
-                <tr key={a.id} className="border-t hover:bg-gray-50">
-                  <td className="p-3">{a.judul}</td>
-                  <td className="p-3">{a.kategori}</td>
-                  <td className="p-3">{a.penulis || '-'}</td>
-                  <td className="p-3">
-                    {a.gambar_url ? (
-                      <img
-                        src={a.gambar_url}
-                        alt={a.judul}
-                        className="w-16 h-12 object-cover rounded"
-                      />
-                    ) : (
-                      '-'
-                    )}
-                  </td>
-                  <td className="p-3 flex gap-2">
-                    <button
-                      onClick={() => { setSelected(a); setShowForm(true); }}
-                      className="p-2 bg-yellow-400 rounded hover:bg-yellow-500"
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(a.id!)}
-                      className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+      {isLoading ? <div>Loading...</div> : (
+        <div className="grid gap-4">
+          {data?.map((row: any) => (
+            <div key={row.id} className="p-4 bg-white rounded shadow flex justify-between">
+              <div>
+                <div className="text-lg font-semibold">{row.judul}</div>
+                <div className="text-sm text-gray-600">{row.kategori} • {new Date(row.tanggal).toLocaleDateString('id-ID')}</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  className="px-3 py-1 text-sm bg-gray-100 rounded"
+                  onClick={() => { setEditData(row); setModalOpen(true); }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="px-3 py-1 text-sm text-red-600"
+                  onClick={() => handleDelete(row.id)}
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-              {artikels.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="text-center p-4 text-gray-500">
-                    Belum ada artikel
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg min-w-[350px]">
+            <ArtikelForm
+              defaultValues={editData || {}}
+              onSubmit={editData ? handleEdit : handleCreate}
+              onCancel={() => { setModalOpen(false); setEditData(null); }}
+            />
+          </div>
         </div>
       )}
     </div>
