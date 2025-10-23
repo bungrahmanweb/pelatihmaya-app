@@ -14,15 +14,27 @@ export interface Pelatihan {
 export interface Peserta {
   id: string;
   nama: string;
-  email: string;
-  telepon: string;
+  email: string | null;
+  telepon: string | null;
   alamat: string;
   nik: string;
   tempat_lahir: string;
   tanggal_lahir: string;
   pelatihan_id: string;
+  ukuran_jaket: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL';
+  total_pembayaran?: number;
   created_at?: string;
   updated_at?: string;
+  pelatihan?: {
+    id: string;
+    nama_pelatihan: string;
+    batch_pelatihan: string;
+    harga_pelatihan: number;
+  };
+  pembayaran?: Array<{
+    jumlah: number;
+    tanggal_pembayaran: string;
+  }>;
 }
 
 // Pembayaran Types

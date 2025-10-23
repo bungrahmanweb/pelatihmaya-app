@@ -10,8 +10,18 @@ export default function AdminPeserta() {
   const [selectedPelatihanId, setSelectedPelatihanId] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'lunas' | 'belum-lunas'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: pelatihan, isLoading: loadingPelatihan } = usePelatihanList();
-  const { data: peserta, isLoading, refetch } = usePesertaByPelatihan(selectedPelatihanId);
+  const { 
+    data: pelatihan, 
+    isLoading: loadingPelatihan,
+    error: pelatihanError 
+  } = usePelatihanList();
+  
+  const { 
+    data: peserta, 
+    isLoading, 
+    error: pesertaError,
+    refetch 
+  } = usePesertaByPelatihan(selectedPelatihanId);
 
   const filteredPeserta = React.useMemo(() => {
     if (!peserta || !pelatihan) return [];
@@ -99,7 +109,31 @@ export default function AdminPeserta() {
   };
 
   if (loadingPelatihan) {
-    return <div>Loading data pelatihan...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-xl font-semibold mb-2">Loading...</div>
+          <div className="text-gray-500">Memuat data pelatihan</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (pelatihanError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-xl font-semibold text-red-600 mb-2">Error</div>
+          <div className="text-gray-500">{pelatihanError instanceof Error ? pelatihanError.message : 'Terjadi kesalahan saat memuat data'}</div>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
