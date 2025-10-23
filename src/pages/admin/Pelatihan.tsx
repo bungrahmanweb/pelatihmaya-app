@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { usePelatihanList } from '@/hooks/usePelatihan';
 import PelatihanForm from '@/components/forms/PelatihanForm';
 import { createPelatihan, updatePelatihan, deletePelatihan } from '@/integrations/supabase/pelatihanService';
+import { Pelatihan } from '@/types';
+import { toast } from 'sonner';
 
 export default function AdminPelatihan() {
-  const { data, isLoading, refetch } = usePelatihanList();
+  const { data, isLoading, error, refetch } = usePelatihanList();
   const [modalOpen, setModalOpen] = useState(false);
   const [editData, setEditData] = useState<any>(null);
 

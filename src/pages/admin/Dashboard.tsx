@@ -1,6 +1,8 @@
 import React from 'react';
 import { usePelatihanSummary } from '@/hooks/useReports';
 import { useMonthlyReport } from '@/hooks/useReports';
+import { PelatihanSummary, MonthlyReport } from '@/types';
+import { Card } from '@/components/ui/card';
 
 export default function AdminDashboard() {
   const { data: pelatihan, isLoading: loadingPelatihan, error: errorPelatihan } = usePelatihanSummary();
