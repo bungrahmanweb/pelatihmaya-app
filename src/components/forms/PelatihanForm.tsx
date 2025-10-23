@@ -11,7 +11,7 @@ type FormValues = {
   status?: 'SELESAI' | 'AKAN_DATANG';
 };
 
-export default function PelatihanForm({ defaultValues, onSubmit }: any) {
+export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any) {
   const { register, handleSubmit } = useForm<FormValues>({ defaultValues });
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -40,7 +40,7 @@ export default function PelatihanForm({ defaultValues, onSubmit }: any) {
       </select>
 
       <div className="mt-4 flex justify-end gap-2">
-        <button type="button" className="px-3 py-2 bg-gray-200 rounded" onClick={() => window.dispatchEvent(new Event('close-modal'))}>Batal</button>
+        <button type="button" className="px-3 py-2 bg-gray-200 rounded" onClick={onCancel}>Batal</button>
         <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
       </div>
     </form>
