@@ -6,6 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 
 type FormValues = {
   judul: string;
+  slug: string;
   kategori: string;
   tanggal: string;
   konten: string;
@@ -18,25 +19,38 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currentImage = watch('gambar_url');
-  const konten = watch('konten');
+  const judul = watch('judul');
 
+  // Reset form ketika defaultValues berubah
   useEffect(() => {
     if (defaultValues) reset(defaultValues);
   }, [defaultValues, reset]);
 
+  // Generate slug otomatis saat judul berubah
+  useEffect(() => {
+    if (judul) {
+      const slug = judul
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '');
+      setValue('slug', slug);
+    }
+  }, [judul, setValue]);
+
+  // Auto-resize editor ReactQuill
   useEffect(() => {
     const editor = document.querySelector('.ql-editor');
     if (!editor) return;
 
     const resizeEditor = () => {
-        editor.style.height = 'auto';
-        editor.style.height = editor.scrollHeight + 'px';
+      editor.style.height = 'auto';
+      editor.style.height = editor.scrollHeight + 'px';
     };
 
     editor.addEventListener('input', resizeEditor);
     return () => editor.removeEventListener('input', resizeEditor);
-    }, []);
-
+  }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -87,8 +101,10 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Hidden fields */}
       <input type="hidden" {...register('gambar_url')} />
       <input type="hidden" {...register('konten')} />
+      <input type="hidden" {...register('slug')} />
 
       <label>Judul Artikel</label>
       <input
@@ -112,21 +128,17 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
       />
 
       <label className="block mt-3 font-medium">Isi Artikel</label>
-        <div
-        className="bg-white border rounded"
-        style={{ resize: 'vertical', overflow: 'auto' }}
-        >
+      <div className="bg-white border rounded" style={{ resize: 'vertical', overflow: 'auto' }}>
         <ReactQuill
-            theme="snow"
-            modules={modules}
-            formats={formats}
-            value={watch('konten') || ''}
-            onChange={(val) => setValue('konten', val)}
-            placeholder="Tulis isi artikel di sini..."
-            style={{ minHeight: '200px' }}
+          theme="snow"
+          modules={modules}
+          formats={formats}
+          value={watch('konten') || ''}
+          onChange={(val) => setValue('konten', val)}
+          placeholder="Tulis isi artikel di sini..."
+          style={{ minHeight: '200px' }}
         />
-        </div>
-
+      </div>
 
       <label className="mt-3 block">Gambar Artikel</label>
       <div className="mt-2 space-y-2">

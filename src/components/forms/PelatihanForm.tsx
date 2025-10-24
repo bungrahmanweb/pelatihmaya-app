@@ -6,12 +6,14 @@ import 'react-quill/dist/quill.snow.css';
 
 type FormValues = {
   nama_pelatihan: string;
+  slug: string;
   kategori_pelatihan: string;
   batch_pelatihan: string;
   tanggal_pelaksanaan: string;
   harga_pelatihan: number;
   deskripsi?: string;
   status?: 'SELESAI' | 'AKAN_DATANG';
+  sertifikat?: 'Kemnaker-RI' | 'BNSP' | 'Lokal';
   gambar_url?: string;
 };
 
@@ -21,32 +23,40 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
   });
   const { uploadImage, deleteImage } = useStorage();
   const [isUploading, setIsUploading] = useState(false);
-  const [deskripsi, setDeskripsi] = useState(defaultValues?.deskripsi || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currentImage = watch('gambar_url');
+  const namaPelatihan = watch('nama_pelatihan');
 
+  // Reset form jika ada defaultValues
   useEffect(() => {
-    if (defaultValues) {
-      reset(defaultValues);
-      setDeskripsi(defaultValues.deskripsi || '');
-    }
+    if (defaultValues) reset(defaultValues);
   }, [defaultValues, reset]);
+
+  // Generate slug otomatis dari nama_pelatihan
   useEffect(() => {
-      if (defaultValues) reset(defaultValues);
-    }, [defaultValues, reset]);
-  
-    useEffect(() => {
-      const editor = document.querySelector('.ql-editor');
-      if (!editor) return;
-  
-      const resizeEditor = () => {
-          editor.style.height = 'auto';
-          editor.style.height = editor.scrollHeight + 'px';
-      };
-  
-      editor.addEventListener('input', resizeEditor);
-      return () => editor.removeEventListener('input', resizeEditor);
-      }, []);
+    if (namaPelatihan) {
+      const slug = namaPelatihan
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '');
+      setValue('slug', slug);
+    }
+  }, [namaPelatihan, setValue]);
+
+  // Auto-resize editor
+  useEffect(() => {
+    const editor = document.querySelector('.ql-editor');
+    if (!editor) return;
+
+    const resizeEditor = () => {
+      editor.style.height = 'auto';
+      editor.style.height = editor.scrollHeight + 'px';
+    };
+
+    editor.addEventListener('input', resizeEditor);
+    return () => editor.removeEventListener('input', resizeEditor);
+  }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,7 +87,7 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
     }
   };
 
-  // toolbar yang mirip ArtikelForm
+  // ReactQuill toolbar
   const quillModules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -88,30 +98,46 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
     ],
   };
 
+  const quillFormats = [
+    'header', 'bold', 'italic', 'underline', 'blockquote',
+    'list', 'bullet', 'link', 'image'
+  ];
+
   return (
     <form
-      onSubmit={handleSubmit((data) => onSubmit({ ...data, deskripsi }))}
+      onSubmit={handleSubmit((data) => onSubmit(data))}
       className="space-y-4"
     >
+      {/* Hidden fields */}
       <input type="hidden" {...register('gambar_url')} />
+      <input type="hidden" {...register('slug')} />
 
       <label>Nama Pelatihan</label>
-      <input className="w-full p-2 border rounded" {...register('nama_pelatihan')} />
+      <input
+        className="w-full p-2 border rounded"
+        {...register('nama_pelatihan', { required: true })}
+      />
 
       <label>Kategori</label>
-      <input className="w-full p-2 border rounded" {...register('kategori_pelatihan')} />
+      <input
+        className="w-full p-2 border rounded"
+        {...register('kategori_pelatihan', { required: true })}
+      />
 
       <label>Batch</label>
-      <input className="w-full p-2 border rounded" {...register('batch_pelatihan')} />
+      <input
+        className="w-full p-2 border rounded"
+        {...register('batch_pelatihan', { required: true })}
+      />
 
-      <label>Tanggal</label>
+      <label>Tanggal Pelaksanaan</label>
       <input
         className="w-full p-2 border rounded"
         type="date"
-        {...register('tanggal_pelaksanaan')}
+        {...register('tanggal_pelaksanaan', { required: true })}
       />
 
-      <label>Harga</label>
+      <label>Harga Pelatihan</label>
       <input
         className="w-full p-2 border rounded"
         type="number"
@@ -119,18 +145,16 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
       />
 
       <label className="block mt-3 font-medium">Deskripsi</label>
-      <div
-        className="bg-white border rounded"
-        style={{ resize: 'vertical', overflow: 'auto' }}
-      >
+      <div className="bg-white border rounded" style={{ resize: 'vertical', overflow: 'auto' }}>
         <ReactQuill
           theme="snow"
+          modules={quillModules}
+          formats={quillFormats}
           value={watch('deskripsi') || ''}
           onChange={(val) => setValue('deskripsi', val)}
           style={{ minHeight: '200px' }}
         />
       </div>
-
 
       <label className="mt-3 block">Gambar Pelatihan</label>
       <div className="mt-2 space-y-2">
@@ -161,6 +185,13 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
       <select className="w-full p-2 border rounded" {...register('status')}>
         <option value="AKAN_DATANG">Akan Datang</option>
         <option value="SELESAI">Selesai</option>
+      </select>
+
+      <label className="mt-3">Sertifikat</label>
+      <select className="w-full p-2 border rounded" {...register('sertifikat', { required: true })}>
+        <option value="Kemnaker-RI">Kemnaker-RI</option>
+        <option value="BNSP">BNSP</option>
+        <option value="Lokal">Lokal</option>
       </select>
 
       <div className="mt-4 flex justify-end gap-2">
