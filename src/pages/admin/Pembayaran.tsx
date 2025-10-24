@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+
 import { useNavigate } from 'react-router-dom';
 import { createPembayaran, deletePembayaran } from '@/integrations/supabase/pembayaranService';
 import { usePelatihanList } from '@/hooks/usePelatihan';
@@ -15,6 +17,7 @@ export default function AdminPembayaran() {
   const [selectedPesertaId, setSelectedPesertaId] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewType, setPreviewType] = useState<'peserta' | 'pembayaran' | null>(null);
   const [previewPembayaran, setPreviewPembayaran] = useState<any>(null);
@@ -46,12 +49,16 @@ export default function AdminPembayaran() {
     const result = await createPembayaran(values);
     setModalOpen(false);
     refetchPembayaran();
+    // invalidate peserta biar AdminPeserta ikut refresh
+    queryClient.invalidateQueries({ queryKey: ['peserta'] });
     return { id: result.id };
   };
   const handleDelete = async (id: string) => {
     if (window.confirm('Hapus pembayaran ini?')) {
       await deletePembayaran(id);
       refetchPembayaran();
+      // invalidate peserta juga
+      queryClient.invalidateQueries({ queryKey: ['peserta'] });
     }
   };
 

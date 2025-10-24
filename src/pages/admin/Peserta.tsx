@@ -294,16 +294,29 @@ export default function AdminPeserta() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-3">
                   <button
+                    className={`${
+                      row.total_pembayaran >= (pelatihan?.find(p => p.id === row.pelatihan_id)?.harga_pelatihan || 0)
+                        ? 'text-green-600 hover:text-green-900'
+                        : 'text-gray-400 cursor-not-allowed'
+                    }`}
+                    onClick={() => {
+                      const harga = pelatihan?.find(p => p.id === row.pelatihan_id)?.harga_pelatihan || 0;
+                      if (row.total_pembayaran < harga) {
+                        alert('❌ Sertifikat hanya bisa dicetak jika status sudah LUNAS.');
+                        return;
+                      }
+                      setPreviewPeserta(row);
+                      setPreviewOpen(true);
+                    }}
+                    disabled={row.total_pembayaran < (pelatihan?.find(p => p.id === row.pelatihan_id)?.harga_pelatihan || 0)}
+                  >
+                    Print Sertifikat
+                  </button>
+                  <button
                     className="text-blue-600 hover:text-blue-900"
                     onClick={() => { setEditData(row); setModalOpen(true); }}
                   >
                     Edit
-                  </button>
-                  <button
-                    className="text-green-600 hover:text-green-900"
-                    onClick={() => { setPreviewPeserta(row); setPreviewOpen(true); }}
-                  >
-                    Print Sertifikat
                   </button>
                   <button
                     className="text-red-600 hover:text-red-900"

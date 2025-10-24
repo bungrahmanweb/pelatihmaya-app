@@ -65,7 +65,7 @@ export default function AdminPelatihan() {
       )}
       {modalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 overflow-y-auto z-50">
-          <div className="flex items-center justify-center min-h-screen p-4">
+          <div className="flex items-start justify-center min-h-screen p-4">
             <div className="bg-white p-6 rounded shadow-lg min-w-[350px] max-w-[90%]">
               <PelatihanForm
                 defaultValues={editData || {}}
