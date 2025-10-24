@@ -114,3 +114,25 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-card);
   }
 }
+
+/* --- Atur biar editor Quill bisa di-drag manual --- */
+.ql-container {
+  resize: vertical;
+  overflow: auto;
+  min-height: 200px;
+  max-height: 800px;
+  border-radius: 0.5rem;
+}
+
+/* Biar smooth waktu auto-grow */
+.ql-editor {
+  transition: height 0.2s ease;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
