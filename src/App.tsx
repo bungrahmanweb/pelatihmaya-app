@@ -13,6 +13,9 @@ import Pendaftaran from "@/pages/Pendaftaran";
 import TentangKami from "@/pages/TentangKami";
 import Kontak from "@/pages/Kontak";
 import Auth from "@/pages/Auth";
+import Artikel from "@/pages/Artikel";
+import ArtikelDetail from "@/pages/ArtikelDetail";
+
 
 // Admin Pages
 import AdminLayout from "@/components/layouts/AdminLayout";
@@ -58,6 +61,9 @@ const App = () => (
           <Route path="/tentang" element={<TentangKami />} />
           <Route path="/kontak" element={<Kontak />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/artikel" element={<Artikel />} />
+          <Route path="/artikel/:slug" element={<ArtikelDetail />} />
+
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
@@ -70,8 +76,6 @@ const App = () => (
           <Route path="/admin/karyawan" element={<AdminLayout><AdminKaryawan /></AdminLayout>} />
           <Route path="/admin/laporan" element={<AdminLayout><AdminLaporan /></AdminLayout>} />
           <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
-
-          {/* ✅ Route baru untuk Artikel */}
           <Route path="/admin/artikel" element={<AdminLayout><AdminArtikel /></AdminLayout>} />
           
           {/* 404 */}

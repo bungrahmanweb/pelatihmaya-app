@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useStorage } from '@/hooks/useStorage';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { supabase } from '@/integrations/supabase/client';
 
 type FormValues = {
   nama_pelatihan: string;
@@ -23,6 +24,7 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
   });
   const { uploadImage, deleteImage } = useStorage();
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currentImage = watch('gambar_url');
   const namaPelatihan = watch('nama_pelatihan');
@@ -32,7 +34,7 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
     if (defaultValues) reset(defaultValues);
   }, [defaultValues, reset]);
 
-  // Generate slug otomatis dari nama_pelatihan
+  // Generate slug otomatis
   useEffect(() => {
     if (namaPelatihan) {
       const slug = namaPelatihan
@@ -48,12 +50,10 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
   useEffect(() => {
     const editor = document.querySelector('.ql-editor');
     if (!editor) return;
-
     const resizeEditor = () => {
       editor.style.height = 'auto';
       editor.style.height = editor.scrollHeight + 'px';
     };
-
     editor.addEventListener('input', resizeEditor);
     return () => editor.removeEventListener('input', resizeEditor);
   }, []);
@@ -61,7 +61,6 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     try {
       setIsUploading(true);
       if (currentImage) await deleteImage(currentImage);
@@ -87,7 +86,43 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
     }
   };
 
-  // ReactQuill toolbar
+  // ✅ Cek slug unik sebelum submit
+  const generateUniqueSlug = async (slug: string) => {
+    let finalSlug = slug;
+    let counter = 1;
+
+    while (true) {
+      const { data, error } = await supabase
+        .from('pelatihan')
+        .select('id')
+        .eq('slug', finalSlug)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Slug check error:', error);
+        break;
+      }
+
+      if (!data) break; // slug belum dipakai
+      finalSlug = `${slug}-${counter++}`;
+    }
+
+    return finalSlug;
+  };
+
+  const handleFormSubmit = async (data: FormValues) => {
+    try {
+      setIsSaving(true);
+      const uniqueSlug = await generateUniqueSlug(data.slug);
+      await onSubmit({ ...data, slug: uniqueSlug });
+    } catch (error) {
+      console.error('Submit error:', error);
+      alert('Terjadi kesalahan saat menyimpan data.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const quillModules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -104,45 +139,24 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
   ];
 
   return (
-    <form
-      onSubmit={handleSubmit((data) => onSubmit(data))}
-      className="space-y-4"
-    >
-      {/* Hidden fields */}
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <input type="hidden" {...register('gambar_url')} />
       <input type="hidden" {...register('slug')} />
 
       <label>Nama Pelatihan</label>
-      <input
-        className="w-full p-2 border rounded"
-        {...register('nama_pelatihan', { required: true })}
-      />
+      <input className="w-full p-2 border rounded" {...register('nama_pelatihan', { required: true })} />
 
       <label>Kategori</label>
-      <input
-        className="w-full p-2 border rounded"
-        {...register('kategori_pelatihan', { required: true })}
-      />
+      <input className="w-full p-2 border rounded" {...register('kategori_pelatihan', { required: true })} />
 
       <label>Batch</label>
-      <input
-        className="w-full p-2 border rounded"
-        {...register('batch_pelatihan', { required: true })}
-      />
+      <input className="w-full p-2 border rounded" {...register('batch_pelatihan', { required: true })} />
 
       <label>Tanggal Pelaksanaan</label>
-      <input
-        className="w-full p-2 border rounded"
-        type="date"
-        {...register('tanggal_pelaksanaan', { required: true })}
-      />
+      <input type="date" className="w-full p-2 border rounded" {...register('tanggal_pelaksanaan', { required: true })} />
 
       <label>Harga Pelatihan</label>
-      <input
-        className="w-full p-2 border rounded"
-        type="number"
-        {...register('harga_pelatihan', { valueAsNumber: true })}
-      />
+      <input type="number" className="w-full p-2 border rounded" {...register('harga_pelatihan', { valueAsNumber: true })} />
 
       <label className="block mt-3 font-medium">Deskripsi</label>
       <div className="bg-white border rounded" style={{ resize: 'vertical', overflow: 'auto' }}>
@@ -201,9 +215,9 @@ export default function PelatihanForm({ defaultValues, onSubmit, onCancel }: any
         <button
           type="submit"
           className="px-4 py-2 bg-blue-600 text-white rounded"
-          disabled={isUploading}
+          disabled={isUploading || isSaving}
         >
-          {isUploading ? 'Mengunggah...' : 'Simpan'}
+          {isUploading || isSaving ? 'Menyimpan...' : 'Simpan'}
         </button>
       </div>
     </form>

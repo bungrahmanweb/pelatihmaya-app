@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useStorage } from '@/hooks/useStorage';
+import { supabase } from '@/integrations/supabase/client';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -17,6 +18,7 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
   const { register, handleSubmit, setValue, watch, reset } = useForm<FormValues>({ defaultValues });
   const { uploadImage, deleteImage } = useStorage();
   const [isUploading, setIsUploading] = useState(false);
+  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currentImage = watch('gambar_url');
   const judul = watch('judul');
@@ -26,31 +28,43 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
     if (defaultValues) reset(defaultValues);
   }, [defaultValues, reset]);
 
-  // Generate slug otomatis saat judul berubah
+  // Generate slug unik otomatis
   useEffect(() => {
-    if (judul) {
-      const slug = judul
+    const generateUniqueSlug = async (base: string) => {
+      setIsCheckingSlug(true);
+      let slugBase = base
         .toLowerCase()
         .trim()
         .replace(/\s+/g, '-')
         .replace(/[^\w-]+/g, '');
+
+      let slug = slugBase;
+      let counter = 1;
+
+      while (true) {
+        const { data, error } = await supabase
+          .from('artikel')
+          .select('id')
+          .eq('slug', slug)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error checking slug:', error);
+          break;
+        }
+
+        if (!data) break; // slug unik → langsung pakai
+        slug = `${slugBase}-${counter++}`; // slug sudah ada → tambahkan angka
+      }
+
       setValue('slug', slug);
-    }
-  }, [judul, setValue]);
-
-  // Auto-resize editor ReactQuill
-  useEffect(() => {
-    const editor = document.querySelector('.ql-editor');
-    if (!editor) return;
-
-    const resizeEditor = () => {
-      editor.style.height = 'auto';
-      editor.style.height = editor.scrollHeight + 'px';
+      setIsCheckingSlug(false);
     };
 
-    editor.addEventListener('input', resizeEditor);
-    return () => editor.removeEventListener('input', resizeEditor);
-  }, []);
+    if (judul) {
+      generateUniqueSlug(judul);
+    }
+  }, [judul, setValue]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -81,7 +95,6 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
     }
   };
 
-  // ✨ Custom toolbar WYSIWYG
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -101,7 +114,6 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* Hidden fields */}
       <input type="hidden" {...register('gambar_url')} />
       <input type="hidden" {...register('konten')} />
       <input type="hidden" {...register('slug')} />
@@ -112,12 +124,13 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
         {...register('judul', { required: true })}
         placeholder="Masukkan judul artikel"
       />
+      {isCheckingSlug && <p className="text-sm text-blue-500">Mengecek slug unik...</p>}
 
       <label>Kategori</label>
       <input
         className="w-full p-2 border rounded"
         {...register('kategori', { required: true })}
-        placeholder="Contoh: Teknologi"
+        placeholder="Contoh: Tips, Teknologi, Umum"
       />
 
       <label>Tanggal</label>
@@ -128,7 +141,7 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
       />
 
       <label className="block mt-3 font-medium">Isi Artikel</label>
-      <div className="bg-white border rounded" style={{ resize: 'vertical', overflow: 'auto' }}>
+      <div className="bg-white border rounded">
         <ReactQuill
           theme="snow"
           modules={modules}
@@ -166,8 +179,14 @@ export default function ArtikelForm({ defaultValues, onSubmit, onCancel }: any) 
       </div>
 
       <div className="mt-4 flex justify-end gap-2">
-        <button type="button" className="px-3 py-2 bg-gray-200 rounded" onClick={onCancel}>Batal</button>
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded" disabled={isUploading}>
+        <button type="button" className="px-3 py-2 bg-gray-200 rounded" onClick={onCancel}>
+          Batal
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+          disabled={isUploading || isCheckingSlug}
+        >
           {isUploading ? 'Mengunggah...' : 'Simpan'}
         </button>
       </div>
