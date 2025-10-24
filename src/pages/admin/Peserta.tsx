@@ -45,6 +45,9 @@ export default function AdminPeserta() {
   }, [peserta, pelatihan, selectedPelatihanId, filterStatus, searchQuery]);
   const [modalOpen, setModalOpen] = useState(false);
     const [editData, setEditData] = useState<any>(null);
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewPeserta, setPreviewPeserta] = useState<any>(null);
+
   const selectedPel = pelatihan?.find(p => p.id === selectedPelatihanId);
 
   // ensure selected pelatihan is upcoming; if it's finished or removed, clear selection
@@ -119,6 +122,23 @@ export default function AdminPeserta() {
       refetch();
     }
   };
+  const printSertifikatModal = () => {
+  const content = document.getElementById('sertifikat-printable');
+  if (!content) return;
+  const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+    .map((n) => n.outerHTML)
+    .join('\n');
+  const newWin = window.open('', '_blank');
+  if (!newWin) return;
+  newWin.document.open();
+  newWin.document.write(`<!doctype html><html><head><meta charset="utf-8">${styles}</head><body>${content.innerHTML}</body></html>`);
+  newWin.document.close();
+  newWin.focus();
+  setTimeout(() => {
+    newWin.print();
+  }, 500);
+};
+
 
   if (loadingPelatihan) {
     return (
@@ -272,20 +292,27 @@ export default function AdminPeserta() {
                         : 'Belum Lunas'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      className="text-blue-600 hover:text-blue-900 mr-4"
-                      onClick={() => { setEditData(row); setModalOpen(true); }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="text-red-600 hover:text-red-900"
-                      onClick={() => handleDelete(row.id)}
-                    >
-                      Hapus
-                    </button>
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-3">
+                  <button
+                    className="text-blue-600 hover:text-blue-900"
+                    onClick={() => { setEditData(row); setModalOpen(true); }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="text-green-600 hover:text-green-900"
+                    onClick={() => { setPreviewPeserta(row); setPreviewOpen(true); }}
+                  >
+                    Print Sertifikat
+                  </button>
+                  <button
+                    className="text-red-600 hover:text-red-900"
+                    onClick={() => handleDelete(row.id)}
+                  >
+                    Hapus
+                  </button>
+                </td>
+
                 </tr>
               ))}
             </tbody>
@@ -308,6 +335,28 @@ export default function AdminPeserta() {
           </div>
         </div>
       )}
+      {previewOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white rounded shadow-lg max-w-4xl w-full">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h3 className="text-lg font-medium">Preview Sertifikat</h3>
+              <div className="flex gap-2">
+                <button className="px-3 py-1 bg-gray-200 rounded" onClick={() => setPreviewOpen(false)}>Close</button>
+              </div>
+            </div>
+            <div className="p-6 overflow-auto max-h-[80vh]">
+              <div id="sertifikat-printable">
+                <SertifikatTemplate peserta={previewPeserta} pelatihan={pelatihan?.find(p => p.id === previewPeserta?.pelatihan_id)} />
+              </div>
+            </div>
+            <div className="p-4 border-t flex justify-end gap-2">
+              <button className="px-3 py-1 bg-gray-200 rounded" onClick={() => setPreviewOpen(false)}>Close</button>
+              <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={printSertifikatModal}>Print</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
