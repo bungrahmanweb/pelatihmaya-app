@@ -14,7 +14,7 @@ type FormValues = {
   harga_pelatihan: number;
   deskripsi?: string;
   status?: 'SELESAI' | 'AKAN_DATANG';
-  sertifikat?: 'Kemnaker-RI' | 'BNSP' | 'Lokal';
+  sertifikat?: 'Kemnaker-RI' | 'BNSP' | 'Internasinal' | 'Lokal';
   gambar_url?: string;
 };
 

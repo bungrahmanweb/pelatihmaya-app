@@ -67,7 +67,7 @@ export default function PembayaranInvoice({ pembayaran, showControls }: Pembayar
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-800">BUKTI PEMBAYARAN</h1>
-            <p className="text-gray-600">Maya Beauty Training Center</p>
+            <p className="text-gray-600">Sigma Training Center</p>
           </div>
 
             {/* Invoice Details */}
