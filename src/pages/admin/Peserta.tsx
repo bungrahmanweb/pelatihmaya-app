@@ -5,6 +5,8 @@ import PesertaForm from '@/components/forms/PesertaForm';
 import { createPeserta, updatePeserta, deletePeserta } from '@/integrations/supabase/pesertaService';
 import { Peserta } from '@/types';
 import * as XLSX from 'xlsx';
+import SertifikatTemplate from '@/components/invoice/SertifikatTemplate';
+
 
 export default function AdminPeserta() {
   const [selectedPelatihanId, setSelectedPelatihanId] = useState('');

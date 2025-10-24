@@ -9,7 +9,7 @@ type FormValues = {
   nama_pelatihan: string;
   slug: string;
   kategori_pelatihan: string;
-  batch_pelatihan: string;
+  batch_pelatihan: string;  
   tanggal_pelaksanaan: string;
   harga_pelatihan: number;
   deskripsi?: string;

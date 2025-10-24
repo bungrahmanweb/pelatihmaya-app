@@ -57,7 +57,7 @@ export default function ArtikelDetail() {
         <div className="pt-6 border-t">
           <Link
             to="/artikel"
-            className="inline-flex items-center text-blue-600 hover:underline"
+            className="inline-flex items-center text-red-600 hover:underline"
           >
             ← Kembali ke Daftar Artikel
           </Link>

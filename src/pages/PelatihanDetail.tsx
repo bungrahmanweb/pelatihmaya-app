@@ -30,13 +30,13 @@ export default function PelatihanDetail() {
       <PublicNav />
 
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-700 to-blue-500 text-white py-16 mb-10">
+      <div className="relative bg-gradient-to-r from-red-700 to-red-500 text-white py-16 mb-10">
         <div className="absolute inset-0 bg-[url('/hero-bg.jpg')] bg-cover bg-center opacity-30"></div>
         <div className="relative max-w-5xl mx-auto px-6 text-center">
           <h1 className="text-3xl md:text-5xl font-bold mb-3">
             {isLoading ? "Memuat..." : pelatihan?.nama_pelatihan}
           </h1>
-          <p className="text-blue-100 text-sm md:text-base">
+          <p className="text-red-100 text-sm md:text-base">
             Sigma Energi Indonesia – Sertifikasi {pelatihan?.sertifikat || "-"}
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function PelatihanDetail() {
               {/* Deskripsi */}
               <div>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                  <span className="inline-block px-3 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full">
                     {pelatihan.kategori_pelatihan}
                   </span>
                   {pelatihan.status && (
@@ -109,7 +109,7 @@ export default function PelatihanDetail() {
 
                 <div className="space-y-4 text-sm">
                   <div className="flex items-start gap-3">
-                    <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <Calendar className="w-5 h-5 text-red-600 mt-0.5" />
                     <div>
                       <p className="text-gray-500">Tanggal Pelaksanaan</p>
                       <p className="font-semibold text-gray-800">
@@ -121,7 +121,7 @@ export default function PelatihanDetail() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Users className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <Users className="w-5 h-5 text-red-600 mt-0.5" />
                     <div>
                       <p className="text-gray-500">Batch</p>
                       <p className="font-semibold text-gray-800">
@@ -131,7 +131,7 @@ export default function PelatihanDetail() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Award className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <Award className="w-5 h-5 text-red-600 mt-0.5" />
                     <div>
                       <p className="text-gray-500">Sertifikasi</p>
                       <p className="font-semibold text-gray-800">
@@ -141,10 +141,10 @@ export default function PelatihanDetail() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <DollarSign className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <DollarSign className="w-5 h-5 text-red-600 mt-0.5" />
                     <div>
                       <p className="text-gray-500">Biaya Pelatihan</p>
-                      <p className="font-semibold text-blue-700 text-xl">
+                      <p className="font-semibold text-red-700 text-xl">
                         Rp {Number(pelatihan.harga_pelatihan).toLocaleString("id-ID")}
                       </p>
                     </div>

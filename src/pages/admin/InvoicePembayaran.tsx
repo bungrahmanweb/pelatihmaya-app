@@ -25,7 +25,7 @@ export default function InvoicePembayaranPage() {
   return (
     <div>
       <div className="p-4 print:hidden flex justify-end">
-        <button onClick={() => window.print()} className="px-3 py-2 bg-blue-600 text-white rounded">Download PDF</button>
+        <button onClick={() => window.print()} className="px-3 py-2 bg-red-600 text-white rounded">Download PDF</button>
       </div>
       <PembayaranInvoice pembayaran={pembayaran} />
     </div>

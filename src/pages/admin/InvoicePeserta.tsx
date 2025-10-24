@@ -24,7 +24,7 @@ export default function InvoicePesertaPage() {
   return (
     <div>
       <div className="p-4 print:hidden flex justify-end">
-        <button onClick={() => window.print()} className="px-3 py-2 bg-blue-600 text-white rounded">Download PDF</button>
+        <button onClick={() => window.print()} className="px-3 py-2 bg-red-600 text-white rounded">Download PDF</button>
       </div>
       <div className="min-h-screen bg-white p-8">
         <h2 style={{ fontWeight: 700, fontSize: 22, marginBottom: 16 }}>INVOICE PEMBAYARAN</h2>

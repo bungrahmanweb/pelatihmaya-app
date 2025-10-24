@@ -21,16 +21,16 @@ export default function Index() {
       <PublicNav />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-blue-700 to-blue-500 text-white py-24 overflow-hidden">
+      <section className="relative bg-gradient-to-r from-red-700 to-red-500 text-white py-24 overflow-hidden">
         <div className="absolute inset-0 bg-[url('/hero-bg.jpg')] bg-cover bg-center opacity-30"></div>
         <div className="relative max-w-6xl mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-lg">
             Sigma Energi Indonesia
           </h1>
-          <p className="text-lg md:text-xl text-blue-100 mb-6 italic">
+          <p className="text-lg md:text-xl text-red-100 mb-6 italic">
             Serving People Professionally
           </p>
-          <p className="text-md md:text-lg max-w-2xl mx-auto text-blue-100 mb-8">
+          <p className="text-md md:text-lg max-w-2xl mx-auto text-red-100 mb-8">
             Adalah Perusahaan K3 yang menyediakan Pelatihan, Pembinaan, dan Sertifikasi 
             dari Kementerian Ketenagakerjaan RI serta BNSP.
           </p>
@@ -44,9 +44,9 @@ export default function Index() {
       <section className="bg-white -mt-10 z-10 relative">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 px-6 py-10">
           {[
-            { icon: <Users className="w-8 h-8 text-blue-700" />, label: "Alumni", value: "4000+" },
-            { icon: <Globe className="w-8 h-8 text-blue-700" />, label: "Jenis Pelatihan", value: "50+" },
-            { icon: <GraduationCap className="w-8 h-8 text-blue-700" />, label: "Batch", value: "60+" },
+            { icon: <Users className="w-8 h-8 text-red-700" />, label: "Alumni", value: "4000+" },
+            { icon: <Globe className="w-8 h-8 text-red-700" />, label: "Jenis Pelatihan", value: "50+" },
+            { icon: <GraduationCap className="w-8 h-8 text-red-700" />, label: "Batch", value: "60+" },
             { icon: <Star className="w-8 h-8 text-yellow-500" />, label: "Pelayanan", value: "Terbaik" },
           ].map((item, i) => (
             <Card
@@ -103,12 +103,12 @@ export default function Index() {
                       dangerouslySetInnerHTML={{ __html: p.deskripsi || "" }}
                     />
                     <div className="mt-4 flex justify-between items-center">
-                      <span className="text-blue-700 font-semibold">
+                      <span className="text-red-700 font-semibold">
                         Rp {Number(p.harga_pelatihan).toLocaleString("id-ID")}
                       </span>
                       <Link
                         to={`/pelatihan/${p.slug}`}
-                        className="text-sm text-white bg-blue-600 px-3 py-1.5 rounded hover:bg-blue-700"
+                        className="text-sm text-white bg-red-600 px-3 py-1.5 rounded hover:bg-red-700"
                       >
                         Detail
                       </Link>
@@ -162,7 +162,7 @@ export default function Index() {
                     <div className="mt-4 flex justify-end">
                       <Link
                         to={`/artikel/${a.slug}`}
-                        className="text-sm text-white bg-blue-600 px-3 py-1.5 rounded hover:bg-blue-700"
+                        className="text-sm text-white bg-red-600 px-3 py-1.5 rounded hover:bg-red-700"
                       >
                         Baca
                       </Link>

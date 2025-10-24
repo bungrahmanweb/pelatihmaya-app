@@ -35,7 +35,7 @@ export default function AdminPelatihan() {
       <h1 className="text-3xl font-bold mb-4">Manajemen Pelatihan</h1>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={() => { setEditData(null); setModalOpen(true); }}>Tambah Pelatihan</button>
+          <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={() => { setEditData(null); setModalOpen(true); }}>Tambah Pelatihan</button>
           <div className="text-sm text-muted">Total: <span className="font-semibold">{data?.length || 0}</span></div>
         </div>
       </div>

@@ -40,7 +40,7 @@ export default function AdminKaryawan() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">Data Karyawan</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onClick={() => { setEditData(null); setModalOpen(true); }}>Tambah Karyawan</button>
+        <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-blue-700" onClick={() => { setEditData(null); setModalOpen(true); }}>Tambah Karyawan</button>
       </div>
 
       {loading ? <div>Loading...</div> : (
