@@ -29,6 +29,7 @@ import AdminPengeluaran from "@/pages/admin/Pengeluaran";
 import AdminKaryawan from "@/pages/admin/Karyawan";
 import AdminLaporan from "@/pages/admin/Laporan";
 import AdminUsers from "@/pages/admin/Users";
+import AdminAplikasi from "@/pages/admin/Aplikasi";
 
 // ✅ Tambahkan import halaman baru ini
 import AdminArtikel from "@/pages/admin/Artikel";
@@ -77,6 +78,8 @@ const App = () => (
           <Route path="/admin/laporan" element={<AdminLayout><AdminLaporan /></AdminLayout>} />
           <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
           <Route path="/admin/artikel" element={<AdminLayout><AdminArtikel /></AdminLayout>} />
+          <Route path="/admin/aplikasi" element={<AdminLayout><AdminAplikasi /></AdminLayout>}
+/>
           
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

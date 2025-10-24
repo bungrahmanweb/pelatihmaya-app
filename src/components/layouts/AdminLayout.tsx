@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
+import { Settings } from 'lucide-react';
 import { LayoutDashboard, GraduationCap, Users, CreditCard, DollarSign, Briefcase, FileText, LogOut } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -144,6 +145,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               <FileText className="w-4 h-4" />
               Laporan
+            </NavLink>
+            <NavLink
+              to="/admin/aplikasi"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground ${
+                  isActive ? 'bg-accent text-accent-foreground' : ''
+                }`
+              }
+            >
+              <Settings className="w-4 h-4" />
+              Aplikasi
             </NavLink>
             <button
               onClick={() => supabase.auth.signOut()}

@@ -1,11 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useStorage } from "@/hooks/useStorage";
-import { supabase } from "@/integrations/supabase/client";
+import { useAplikasi } from "@/hooks/useAplikasi";
 import { toast } from "sonner";
 
 type FormValues = {
-  id?: string;
   nama_website: string;
   tagline: string;
   logo_url: string;
@@ -28,14 +27,19 @@ type FormValues = {
 };
 
 export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
-  const { register, handleSubmit, control, setValue, reset, watch } =
-    useForm<FormValues>();
-  const { fields, append, remove } = useFieldArray({ control, name: "layanan" });
+  const { data, loading, saving, save } = useAplikasi();
   const { uploadImage, deleteImage } = useStorage();
-
-  const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [appId, setAppId] = useState<string | null>(null);
+
+  const { register, handleSubmit, control, setValue, reset, watch } =
+    useForm<FormValues>({
+      defaultValues: data || {},
+    });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "layanan",
+  });
 
   const logoRef = useRef<HTMLInputElement>(null);
   const faviconRef = useRef<HTMLInputElement>(null);
@@ -45,32 +49,21 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
   const favicon = watch("favicon_url");
   const sertifikat = watch("sertifikat_bg_url");
 
-  // 🟢 Load data aplikasi (1 row saja)
+  // 🔄 Reset form saat data dari hook selesai dimuat
   useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase
-        .from("aplikasi")
-        .select("*")
-        .limit(1)
-        .single();
-      if (error && error.code !== "PGRST116") {
-        console.error(error);
-      } else if (data) {
-        setAppId(data.id);
-        reset({
-          ...data,
-          layanan: Array.isArray(data.layanan)
-            ? data.layanan
-            : data.layanan
-            ? JSON.parse(data.layanan)
-            : [],
-        });
-      }
-    };
-    fetchData();
-  }, [reset]);
+    if (data) {
+      reset({
+        ...data,
+        layanan: Array.isArray(data.layanan)
+          ? data.layanan
+          : data.layanan
+          ? JSON.parse(data.layanan)
+          : [],
+      });
+    }
+  }, [data, reset]);
 
-  // 🟢 Upload file helper
+  // 🟢 Upload file handler
   const handleUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     field: keyof FormValues
@@ -93,6 +86,7 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
     }
   };
 
+  // 🟢 Hapus file
   const handleRemoveFile = async (field: keyof FormValues) => {
     const current = watch(field);
     if (!current) return;
@@ -106,41 +100,22 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
     }
   };
 
-  // 🟢 Simpan data aplikasi (upsert satu baris)
-  const onSubmit = async (data: FormValues) => {
-    try {
-      setIsSaving(true);
-
-      const payload = {
-        ...data,
-        layanan: JSON.stringify(data.layanan || []),
-        updated_at: new Date().toISOString(),
-      };
-
-      const { error } = await supabase.from("aplikasi").upsert(
-        appId
-          ? { id: appId, ...payload }
-          : payload,
-        { onConflict: "id" }
-      );
-
-      if (error) throw error;
-      toast.success("Data aplikasi berhasil disimpan");
-    } catch (err) {
-      console.error(err);
-      toast.error("Gagal menyimpan data");
-    } finally {
-      setIsSaving(false);
-    }
+  // 🟢 Submit handler
+  const onSubmit = async (formData: FormValues) => {
+    await save({
+      ...formData,
+      layanan: JSON.stringify(formData.layanan || []),
+    });
   };
+
+  if (loading) return <div>Memuat data aplikasi...</div>;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* === Manajemen Website === */}
+      {/* 🌐 WEBSITE */}
       <section className="border rounded-lg p-5">
         <h2 className="text-xl font-semibold mb-3">🌐 Manajemen Website</h2>
-
-        <label className="block">Nama Website</label>
+        <label>Nama Website</label>
         <input className="w-full border p-2 rounded" {...register("nama_website")} />
 
         <label className="block mt-3">Tagline</label>
@@ -148,10 +123,10 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
 
         {/* Logo */}
         <div className="mt-3">
-          <label className="block">Logo Website</label>
+          <label>Logo Website</label>
           {logo && (
             <div className="relative mt-2 w-32">
-              <img src={logo} className="rounded shadow" alt="Logo" />
+              <img src={logo} alt="Logo" className="rounded shadow" />
               <button
                 type="button"
                 onClick={() => handleRemoveFile("logo_url")}
@@ -172,10 +147,10 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
 
         {/* Favicon */}
         <div className="mt-3">
-          <label className="block">Favicon</label>
+          <label>Favicon</label>
           {favicon && (
             <div className="relative mt-2 w-16">
-              <img src={favicon} className="rounded shadow" alt="Favicon" />
+              <img src={favicon} alt="Favicon" className="rounded shadow" />
               <button
                 type="button"
                 onClick={() => handleRemoveFile("favicon_url")}
@@ -195,15 +170,15 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
         </div>
       </section>
 
-      {/* === Manajemen Perusahaan === */}
+      {/* 🏢 PERUSAHAAN */}
       <section className="border rounded-lg p-5">
         <h2 className="text-xl font-semibold mb-3">🏢 Manajemen Perusahaan</h2>
 
-        <label className="block">Nama Perusahaan</label>
+        <label>Nama Perusahaan</label>
         <input className="w-full border p-2 rounded" {...register("nama_perusahaan")} />
 
         <div className="mt-4">
-          <label className="block font-medium">Layanan</label>
+          <label>Layanan</label>
           <div className="space-y-2 mt-2">
             {fields.map((field, index) => (
               <div key={field.id} className="flex gap-2">
@@ -239,7 +214,7 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
         </div>
       </section>
 
-      {/* === Sertifikat === */}
+      {/* 📜 BACKGROUND SERTIFIKAT */}
       <section className="border rounded-lg p-5">
         <h2 className="text-xl font-semibold mb-3">📜 Background Sertifikat</h2>
         {sertifikat && (
@@ -263,7 +238,7 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
         />
       </section>
 
-      {/* === Integrasi === */}
+      {/* 🔗 INTEGRASI */}
       <section className="border rounded-lg p-5">
         <h2 className="text-xl font-semibold mb-3">🔗 Integrasi WhatsApp & Email</h2>
 
@@ -286,7 +261,7 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
         <input placeholder="From Email" className="w-full border p-2 rounded" {...register("smtp_from_email")} />
       </section>
 
-      {/* === Buttons === */}
+      {/* 🧩 BUTTONS */}
       <div className="flex justify-end gap-2 mt-6">
         {onCancel && (
           <button
@@ -299,10 +274,10 @@ export default function AplikasiForm({ onCancel }: { onCancel?: () => void }) {
         )}
         <button
           type="submit"
-          disabled={isSaving || isUploading}
+          disabled={saving || isUploading}
           className="px-4 py-2 bg-blue-600 text-white rounded"
         >
-          {isSaving || isUploading ? "Menyimpan..." : "Simpan"}
+          {saving || isUploading ? "Menyimpan..." : "Simpan"}
         </button>
       </div>
     </form>
