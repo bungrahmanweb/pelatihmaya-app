@@ -12,7 +12,7 @@ export default function PublicFooter() {
               <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center">
                 <GraduationCap className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="font-bold text-lg">LembagaPelatihan</span>
+              <span className="font-bold text-lg">Sigma Energi Indonesia</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Lembaga pelatihan profesional yang membantu meningkatkan kompetensi dan keterampilan Anda.
@@ -48,12 +48,11 @@ export default function PublicFooter() {
 
           {/* Pelatihan */}
           <div>
-            <h3 className="font-semibold mb-4">Kategori Pelatihan</h3>
+            <h3 className="font-semibold mb-4">Sertifikasi</h3>
             <ul className="space-y-2">
-              <li className="text-sm text-muted-foreground">Teknologi</li>
-              <li className="text-sm text-muted-foreground">Manajemen</li>
-              <li className="text-sm text-muted-foreground">Keuangan</li>
-              <li className="text-sm text-muted-foreground">Pemasaran</li>
+              <li className="text-sm text-muted-foreground">Kemnaker-RI</li>
+              <li className="text-sm text-muted-foreground">BNSP</li>
+              <li className="text-sm text-muted-foreground">Internasional</li>
             </ul>
           </div>
 
@@ -78,7 +77,7 @@ export default function PublicFooter() {
         </div>
 
         <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Lembaga Pelatihan. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Sigma Energi Indonesia. All rights reserved.</p>
         </div>
       </div>
     </footer>

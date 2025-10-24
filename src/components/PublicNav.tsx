@@ -24,7 +24,7 @@ export default function PublicNav() {
               <GraduationCap className="w-6 h-6 text-primary-foreground" />
             </div>
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              LembagaPelatihan
+              Sigma Energi Indonesia
             </span>
           </Link>
 

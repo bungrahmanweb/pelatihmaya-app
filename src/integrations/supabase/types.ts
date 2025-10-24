@@ -98,6 +98,40 @@ export type Database = {
         }
         Relationships: []
       }
+      artikel: {
+        Row: {
+          id: string
+          judul: string
+          kategori: string
+          tanggal: string
+          isi: string
+          gambar_url: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          judul: string
+          kategori: string
+          tanggal: string
+          isi: string
+          gambar_url?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          judul?: string
+          kategori?: string
+          tanggal?: string
+          isi?: string
+          gambar_url?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+
       pembayaran: {
         Row: {
           created_at: string | null
@@ -400,6 +434,9 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export type Artikel = Tables<'artikel'>
+
 
 export const Constants = {
   public: {
